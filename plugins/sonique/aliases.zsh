@@ -1,3 +1,4 @@
+alias mvn='mvn-color'
 alias mi='mvn clean install'
 alias mist='mvn clean install -DskipTests -DskipAcceptance'
 alias mih2='mvn clean install -DuseH2=true'
