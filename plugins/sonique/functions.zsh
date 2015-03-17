@@ -120,4 +120,5 @@ function setLinks {
     ln -sfnv ~/projects/sonique-env/gitconfig ~/.gitconfig
     ln -sfnv ~/projects/sonique-env/gitignore ~/.gitignore
     ln -sfnv ~/projects/sonique-env/sonique-init.gradle ~/.gradle/init.gradle
+    ln -sfnv ~/projects/sonique-env/ansible.cfg ~/.ansible.cfg
 }
