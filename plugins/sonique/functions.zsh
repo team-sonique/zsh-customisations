@@ -21,7 +21,6 @@ function killIdeaSupergirl {
 
 function killMavenSupergirl {
     ./supergirl-integration/target/data/apps/supergirl/superman/dev-NETSTREAM-SNAPSHOT/stop.sh -f
-    ./supergirl-integration/target/data/apps/supergirl/dnr/developers-multipleTomcats-NETSTREAM-SNAPSHOT/stop.sh -f
     ./supergirl-integration/target/data/apps/supergirl/superman/ffestyready-NETSTREAM-SNAPSHOT/stop.sh -f
 }
 
