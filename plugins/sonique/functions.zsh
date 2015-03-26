@@ -14,14 +14,13 @@ function tabname {
 }
 
 function killIdeaSupergirl {
-    ./target/data/apps/supergirl/superman/dev-NETSTREAM-SNAPSHOT/stop.sh -f
-    ./target/data/apps/supergirl/superman/ffestyready-NETSTREAM-SNAPSHOT/stop.sh -f
-    ./target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT/stop.sh -f
+    ./target/data/apps/supergirl/superman/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
+    ./target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
 }
 
 function killMavenSupergirl {
-    ./supergirl-integration/target/data/apps/supergirl/superman/dev-NETSTREAM-SNAPSHOT/stop.sh -f
-    ./supergirl-integration/target/data/apps/supergirl/superman/ffestyready-NETSTREAM-SNAPSHOT/stop.sh -f
+    ./supergirl-integration/target/data/apps/supergirl/superman/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
+    ./supergirl-integration/target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
 }
 
 function goMvn3 {
