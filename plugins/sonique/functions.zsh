@@ -99,10 +99,12 @@ ARTIFACT_COORDINATES[redqueen]="sonique.redqueen:redqueen-core"
 ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
 ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
 
-function shoehorn-properties {
+function shoehorn {
+    GOAL="$1"
+
     if [ -z "$2" ]
     then
-        echo "usage: $1 application [version] [environment]"
+        echo "usage: ${GOAL} application [version] [environment]"
         return 1
     else
         APP="$2"
@@ -135,27 +137,27 @@ function shoehorn-properties {
         ENV="$4"
     fi
 
-    echo "-DapplicationName=${APP} -Dversion=${VERSION} -DenvironmentName=${ENV}"
+    mvn shoehorn:${GOAL} -DapplicationName=${APP} -Dversion=${VERSION} -DenvironmentName=${ENV}
 }
 
 function deploy {
-    mvn shoehorn:deploy `shoehorn-properties deploy $@`
+    shoehorn deploy $@
 }
 
 function start {
-    mvn shoehorn:start `shoehorn-properties start $@`
+    shoehorn start $@
 }
 
 function stop {
-    mvn shoehorn:stop `shoehorn-properties stop $@`
+    shoehorn stop $@
 }
 
 function status {
-    mvn shoehorn:status `shoehorn-properties status $@`
+    shoehorn status $@
 }
 
 function clean {
-    mvn shoehorn:clean `shoehorn-properties clean $@`
+    shoehorn clean $@
 }
 
 function setLinks {
