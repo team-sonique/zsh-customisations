@@ -70,3 +70,22 @@ function clean {
     shoehorn clean $@
 }
 
+function deploy-snapshot {
+    shoehorn deploy $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+}
+
+function start-snapshot {
+    shoehorn start $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+}
+
+function stop-snapshot {
+    shoehorn stop $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+}
+
+function status-snapshot {
+    shoehorn status $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+}
+
+function clean-snapshot {
+    shoehorn clean $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+}
