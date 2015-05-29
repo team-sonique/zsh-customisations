@@ -51,41 +51,45 @@ function shoehorn {
 }
 
 function deploy {
-    shoehorn deploy $@
+    shoehorn deploy "$@"
 }
 
 function start {
-    shoehorn start $@
+    shoehorn start "$@"
 }
 
 function stop {
-    shoehorn stop $@
+    shoehorn stop "$@"
 }
 
 function status {
-    shoehorn status $@
+    shoehorn status "$@"
 }
 
 function clean {
-    shoehorn clean $@
+    shoehorn clean "$@"
+}
+
+function shoehorn-snapshot {
+    $1 "$2" "DEV-SNAPSHOT-DEV-SNAPSHOT" "$3"
 }
 
 function deploy-snapshot {
-    shoehorn deploy $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+    shoehorn-snapshot "deploy" "$@"
 }
 
 function start-snapshot {
-    shoehorn start $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+    shoehorn-snapshot "start" "$@"
 }
 
 function stop-snapshot {
-    shoehorn stop $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+    shoehorn-snapshot "stop" "$@"
 }
 
 function status-snapshot {
-    shoehorn status $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+    shoehorn-snapshot "status" "$@"
 }
 
 function clean-snapshot {
-    shoehorn clean $1 DEV-SNAPSHOT-DEV-SNAPSHOT $2
+    shoehorn-snapshot "clean" "$@"
 }
