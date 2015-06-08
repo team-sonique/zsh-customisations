@@ -93,3 +93,22 @@ function status-snapshot {
 function clean-snapshot {
     shoehorn-snapshot "clean" "$@"
 }
+
+function listAppCompletions {
+    reply=(
+        aview
+        ffestiniog
+        gruffalo
+        hector
+        kiki
+        luthor
+        optimusprimer
+        raiden
+        redqueen
+        shovel
+        spm-sat
+        superman
+    )
+}
+
+compctl -K listAppCompletions deploy deploy-snapshot start start-snapshot stop stop-snapshot clean clean-snapshot status status-snapshot
