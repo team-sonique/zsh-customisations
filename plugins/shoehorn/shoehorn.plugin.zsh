@@ -10,25 +10,26 @@ ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
 ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
 
 function get_latest_version {
-    coordinate=${ARTIFACT_COORDINATES[$APP]}
+    local app="$1"
+
+    coordinate=${ARTIFACT_COORDINATES[$app]}
 
     if [ -z ${coordinate} ]
     then
-        groupId="sonique.${APP}"
-        artifactId="${APP}-deploy"
+        groupId="sonique.${app}"
+        artifactId="${app}-deploy"
     else
         groupId=${coordinate%:*}
         artifactId=${coordinate##*:}
     fi
 
-    APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
-    PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${APP}-properties&repos=libs-releases"`
+    local APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
+    local PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=libs-releases"`
     VERSION="${APP_VERSION}-${PROPERTIES_VERSION}"
 }
 
 function shoehorn {
-    local goal="$1"
-    local version env app
+    local goal="$1" version env app
 
     if [ -z "$2" ]
     then
@@ -40,7 +41,7 @@ function shoehorn {
 
     if [ -z "$3" ]
     then
-        get_latest_version
+        get_latest_version ${app}
         version=${VERSION}
     else
         version="$3"
@@ -127,7 +128,7 @@ function listAppCompletions {
             if [ "${APP}" != "${selected_app}" ]
             then
                 APP="${words[2]}"
-                get_latest_version
+                get_latest_version ${APP}
             fi
 
             versions=(
