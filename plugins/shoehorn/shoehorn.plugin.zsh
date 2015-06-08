@@ -95,20 +95,42 @@ function clean-snapshot {
 }
 
 function listAppCompletions {
-    reply=(
-        aview
-        ffestiniog
-        gruffalo
-        hector
-        kiki
-        luthor
-        optimusprimer
-        raiden
-        redqueen
-        shovel
-        spm-sat
-        superman
-    )
+    local ret=1 state
+    _arguments ':subcommand:->subcommand' && ret=0
+
+    case $state in
+      subcommand)
+        subcommands=(
+          "aview:AView"
+          "ffestiniog:Ffestiniog"
+          "gruffalo:Gruffalo"
+          "hector:Hector"
+          "kiki:Kiki"
+          "luthor:Luthor"
+          "optimusprimer:Optimus Primer"
+          "raiden:Raiden"
+          "redqueen:Red Queen"
+          "shovel:Shovel"
+          "spm-sat:Superman Show-and-Tell"
+          "superman:Superman"
+        )
+        _describe -t subcommands 'shoehorn subcommands' subcommands && ret=0
+    esac
+
+    return ret
 }
 
-compctl -K listAppCompletions deploy deploy-snapshot start start-snapshot stop stop-snapshot clean clean-snapshot status status-snapshot
+for cmd in \
+    deploy \
+    deploy-snapshot \
+    start \
+    start-snapshot \
+    stop \
+    stop-snapshot \
+    clean \
+    clean-snapshot \
+    status \
+    status-snapshot
+do
+    compdef listAppCompletions ${cmd}
+done
