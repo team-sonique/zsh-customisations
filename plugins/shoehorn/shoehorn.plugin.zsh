@@ -9,45 +9,51 @@ ARTIFACT_COORDINATES[redqueen]="sonique.redqueen:redqueen-core"
 ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
 ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
 
+function get_latest_version {
+    coordinate=${ARTIFACT_COORDINATES[$APP]}
+
+    if [ -z ${coordinate} ]
+    then
+        groupId="sonique.${APP}"
+        artifactId="${APP}-deploy"
+    else
+        groupId=${coordinate%:*}
+        artifactId=${coordinate##*:}
+    fi
+
+    APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
+    PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${APP}-properties&repos=libs-releases"`
+    VERSION="${APP_VERSION}-${PROPERTIES_VERSION}"
+}
+
 function shoehorn {
-    GOAL="$1"
+    local goal="$1"
+    local version env app
 
     if [ -z "$2" ]
     then
         echo "usage: ${GOAL} application [version] [environment]"
         return 1
     else
-        APP="$2"
+        app="$2"
     fi
 
     if [ -z "$3" ]
     then
-        coordinate=${ARTIFACT_COORDINATES[$APP]}
-
-        if [ -z ${coordinate} ]
-        then
-            groupId="sonique.${APP}"
-            artifactId="${APP}-deploy"
-        else
-            groupId=${coordinate%:*}
-            artifactId=${coordinate##*:}
-        fi
-
-        APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
-        PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${APP}-properties&repos=libs-releases"`
-        VERSION="${APP_VERSION}-${PROPERTIES_VERSION}"
+        get_latest_version
+        version=${VERSION}
     else
-        VERSION="$3"
+        version="$3"
     fi
 
     if [ -z "$4" ]
     then
-        ENV="dev"
+        env="dev"
     else
-        ENV="$4"
+        env="$4"
     fi
 
-    mvn shoehorn:${GOAL} -DapplicationName=${APP} -Dversion=${VERSION} -DenvironmentName=${ENV}
+    mvn shoehorn:${goal} -DapplicationName=${app} -Dversion=${version} -DenvironmentName=${env}
 }
 
 function deploy {
@@ -95,26 +101,48 @@ function clean-snapshot {
 }
 
 function listAppCompletions {
-    local ret=1 state
-    _arguments ':subcommand:->subcommand' && ret=0
+    local ret=1 state context state_descr line
+    _arguments ':app:->app' ':version:->version' ':env:->env' && ret=0
 
     case $state in
-      subcommand)
-        subcommands=(
-          "aview:AView"
-          "ffestiniog:Ffestiniog"
-          "gruffalo:Gruffalo"
-          "hector:Hector"
-          "kiki:Kiki"
-          "luthor:Luthor"
-          "optimusprimer:Optimus Primer"
-          "raiden:Raiden"
-          "redqueen:Red Queen"
-          "shovel:Shovel"
-          "spm-sat:Superman Show-and-Tell"
-          "superman:Superman"
-        )
-        _describe -t subcommands 'shoehorn subcommands' subcommands && ret=0
+        app)
+            apps=(
+              "aview:AView"
+              "ffestiniog:Ffestiniog"
+              "gruffalo:Gruffalo"
+              "hector:Hector"
+              "kiki:Kiki"
+              "luthor:Luthor"
+              "optimusprimer:Optimus Primer"
+              "raiden:Raiden"
+              "redqueen:Red Queen"
+              "shovel:Shovel"
+              "spm-sat:Superman Show-and-Tell"
+              "superman:Superman"
+            )
+            _describe -t apps 'shoehorn apps' apps && ret=0
+            ;;
+        version)
+            local selected_app="${words[2]}"
+            if [ "${APP}" != "${selected_app}" ]
+            then
+                APP="${words[2]}"
+                get_latest_version
+            fi
+
+            versions=(
+                "DEV-SNAPSHOT:Deploy the DEV-SNAPSHOT version of ${APP}"
+                "${VERSION}:Deploy the latest version of ${APP}"
+            )
+            _describe -t versions 'shoehorn versions' versions && ret=0
+            ;;
+        env)
+            envs=(
+                "dev"
+                "dev2"
+            )
+            _describe -t envs 'shoehorn envs' envs && ret=0
+            ;;
     esac
 
     return ret
