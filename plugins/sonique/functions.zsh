@@ -23,22 +23,6 @@ function killMavenSupergirl {
     ./supergirl-integration/target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
 }
 
-function goMvn3 {
-    ln -sfn ~/tools/apache-maven-$MAVEN3_VER ~/tools/mvn
-    export M2_HOME=~/tools/mvn
-    export M2=$M2_HOME/bin
-    export MAVEN_OPTS="-Xmx1G"
-    export PATH=`echo $PATH | sed -e s/apache-maven-$MAVEN2_VER/apache-maven-$MAVEN3_VER/g`
-}
-
-function goMvn2 {
-    ln -sfn ~/tools/apache-maven-$MAVEN2_VER ~/tools/mvn
-    export M2_HOME=~/tools/mvn
-    export M2=$M2_HOME/bin
-    export MAVEN_OPTS="-Xmx1G"
-    export PATH=`echo $PATH | sed -e s/apache-maven-$MAVEN3_VER/apache-maven-$MAVEN2_VER/g`
-}
-
 function goJava6 {
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 }

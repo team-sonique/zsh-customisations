@@ -8,4 +8,3 @@ source ${sonique_plugin_path}/aliases.zsh
 source ${sonique_plugin_path}/functions.zsh
 
 goJava8
-goMvn3
