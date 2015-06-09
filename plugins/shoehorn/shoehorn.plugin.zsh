@@ -37,7 +37,7 @@ function shoehorn {
 
     if [ -z "$2" ]
     then
-        echo "usage: ${goal} application [version] [environment]"
+        echo "usage: ${goal} application [environment] [version]"
         return 1
     else
         app="$2"
@@ -45,16 +45,16 @@ function shoehorn {
 
     if [ -z "$3" ]
     then
-        version=`get_latest_version ${app}`
+        env="dev"
     else
-        version="$3"
+        env="$3"
     fi
 
     if [ -z "$4" ]
     then
-        env="dev"
+        version="$(get_latest_version ${app})"
     else
-        env="$4"
+        version="$4"
     fi
 
     mvn shoehorn:${goal} -DapplicationName=${app} -Dversion=${version} -DenvironmentName=${env}
@@ -80,35 +80,41 @@ function clean {
     shoehorn clean "$@"
 }
 
-function listAppCompletions {
+completion_apps=(
+  "aview:AView"
+  "ffestiniog:Ffestiniog"
+  "gruffalo:Gruffalo"
+  "hector:Hector"
+  "kiki:Kiki"
+  "luthor:Luthor"
+  "optimusprimer:Optimus Primer"
+  "raiden:Raiden"
+  "redqueen:Red Queen"
+  "shovel:Shovel"
+  "spm-sat:Superman Show-and-Tell"
+  "superman:Superman"
+)
+
+completion_envs=(
+    "dev"
+    "dev2"
+)
+
+function listDeployCompletions {
     local ret=1
     local state
     local context
-    local state_descr 
+    local state_descr
     local line
 
-    _arguments ':app:->app' ':version:->version' ':env:->env' && ret=0
+    _arguments ':app:->app' ':env:->env' ':version:->version' && ret=0
 
     case $state in
         app)
-            apps=(
-              "aview:AView"
-              "ffestiniog:Ffestiniog"
-              "gruffalo:Gruffalo"
-              "hector:Hector"
-              "kiki:Kiki"
-              "luthor:Luthor"
-              "optimusprimer:Optimus Primer"
-              "raiden:Raiden"
-              "redqueen:Red Queen"
-              "shovel:Shovel"
-              "spm-sat:Superman Show-and-Tell"
-              "superman:Superman"
-            )
-            _describe -t apps 'shoehorn apps' apps && ret=0
+            _describe -t completion_apps 'shoehorn apps' completion_apps && ret=0
             ;;
         version)
-            local selected_app="${words[2]}" 
+            local selected_app="${words[2]}"
             local version=`get_latest_version ${selected_app}`
 
             versions=(
@@ -118,23 +124,57 @@ function listAppCompletions {
             _describe -t versions 'shoehorn versions' versions && ret=0
             ;;
         env)
-            envs=(
-                "dev"
-                "dev2"
-            )
-            _describe -t envs 'shoehorn envs' envs && ret=0
+            _describe -t completion_envs 'shoehorn envs' completion_envs && ret=0
             ;;
     esac
 
     return ret
 }
 
+function listStartStopCleanAndStatusCompletions {
+    local ret=1
+    local state
+    local context
+    local state_descr
+    local line
+
+    _arguments ':app:->app' ':env:->env' ':version:->version' && ret=0
+
+    case $state in
+        app)
+            _describe -t completion_apps 'shoehorn apps' completion_apps && ret=0
+            ;;
+        version)
+            local selected_app="${words[2]}"
+            local selected_env="${words[3]}"
+
+            if [ "${selected_env}" = "dev" ]
+            then
+                local dirs="$(ls -l /data/apps/${selected_app} | awk '{print $9}' | xargs basename)"
+            else
+                local dirs="$(ssh -q nstream@${selected_env} ls -l /data/apps/${selected_app} | awk '{print $9}' | xargs basename)"
+            fi
+
+            local remove_env_pattern="s/${selected_env}-//"
+            versions=("${(@f)$(echo $dirs | sed $remove_env_pattern)}")
+
+            _describe -t versions 'shoehorn versions' versions && ret=0
+            ;;
+        env)
+            _describe -t completion_envs 'shoehorn envs' completion_envs && ret=0
+            ;;
+    esac
+
+    return ret
+}
+
+compdef listDeployCompletions deploy
+
 for cmd in \
-    deploy \
     start \
     stop \
     clean \
     status
 do
-    compdef listAppCompletions ${cmd}
+    compdef listStartStopCleanAndStatusCompletions ${cmd}
 done
