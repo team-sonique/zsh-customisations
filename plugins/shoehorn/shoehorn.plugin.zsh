@@ -9,34 +9,35 @@ ARTIFACT_COORDINATES[redqueen]="sonique.redqueen:redqueen-core"
 ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
 ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
 
-typeset -A APP_VERSIONS
-
 function get_latest_version {
     local app="$1"
 
-    coordinate=${ARTIFACT_COORDINATES[$app]}
+    local coordinate=${ARTIFACT_COORDINATES[$app]}
 
     if [ -z ${coordinate} ]
     then
-        groupId="sonique.${app}"
-        artifactId="${app}-deploy"
+        local groupId="sonique.${app}"
+        local artifactId="${app}-deploy"
     else
-        groupId=${coordinate%:*}
-        artifactId=${coordinate##*:}
+        local groupId=${coordinate%:*}
+        local artifactId=${coordinate##*:}
     fi
 
-    local APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
-    local PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=libs-releases"`
+    local app_version=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
+    local properties_version=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=libs-releases"`
 
-    APP_VERSIONS[${app}]="${APP_VERSION}-${PROPERTIES_VERSION}"
+    echo "${app_version}-${properties_version}"
 }
 
 function shoehorn {
-    local goal="$1" version env app
+    local goal="$1"
+    local version
+    local env
+    local app
 
     if [ -z "$2" ]
     then
-        echo "usage: ${GOAL} application [version] [environment]"
+        echo "usage: ${goal} application [version] [environment]"
         return 1
     else
         app="$2"
@@ -44,8 +45,7 @@ function shoehorn {
 
     if [ -z "$3" ]
     then
-        get_latest_version ${app}
-        version=${APP_VERSIONS[$app]}
+        version=`get_latest_version ${app}`
     else
         version="$3"
     fi
@@ -81,7 +81,12 @@ function clean {
 }
 
 function listAppCompletions {
-    local ret=1 state context state_descr line
+    local ret=1
+    local state
+    local context
+    local state_descr 
+    local line
+
     _arguments ':app:->app' ':version:->version' ':env:->env' && ret=0
 
     case $state in
@@ -103,17 +108,12 @@ function listAppCompletions {
             _describe -t apps 'shoehorn apps' apps && ret=0
             ;;
         version)
-            local selected_app="${words[2]}"
-
-            if [ "${COMPLETION_LAST_SELECTED_APP}" != "${selected_app}" ]
-            then
-                COMPLETION_LAST_SELECTED_APP="${selected_app}"
-                get_latest_version ${selected_app}
-            fi
+            local selected_app="${words[2]}" 
+            local version=`get_latest_version ${selected_app}`
 
             versions=(
-                "DEV-SNAPSHOT:Deploy the DEV-SNAPSHOT version of ${selected_app}"
-                "${APP_VERSIONS[$selected_app]}:Deploy the latest version of ${selected_app}"
+                "DEV-SNAPSHOT:The DEV-SNAPSHOT version of ${selected_app}"
+                "${version}:The latest version of ${selected_app}"
             )
             _describe -t versions 'shoehorn versions' versions && ret=0
             ;;
@@ -131,15 +131,10 @@ function listAppCompletions {
 
 for cmd in \
     deploy \
-    deploy-snapshot \
     start \
-    start-snapshot \
     stop \
-    stop-snapshot \
     clean \
-    clean-snapshot \
-    status \
-    status-snapshot
+    status
 do
     compdef listAppCompletions ${cmd}
 done
