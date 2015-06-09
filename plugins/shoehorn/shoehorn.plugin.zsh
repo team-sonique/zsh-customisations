@@ -80,30 +80,6 @@ function clean {
     shoehorn clean "$@"
 }
 
-function shoehorn-snapshot {
-    $1 "$2" "DEV-SNAPSHOT-DEV-SNAPSHOT" "$3"
-}
-
-function deploy-snapshot {
-    shoehorn-snapshot "deploy" "$@"
-}
-
-function start-snapshot {
-    shoehorn-snapshot "start" "$@"
-}
-
-function stop-snapshot {
-    shoehorn-snapshot "stop" "$@"
-}
-
-function status-snapshot {
-    shoehorn-snapshot "status" "$@"
-}
-
-function clean-snapshot {
-    shoehorn-snapshot "clean" "$@"
-}
-
 function listAppCompletions {
     local ret=1 state context state_descr line
     _arguments ':app:->app' ':version:->version' ':env:->env' && ret=0
