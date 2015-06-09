@@ -37,7 +37,7 @@ function shoehorn {
 
     if [ -z "$2" ]
     then
-        echo "usage: ${goal} application [environment] [version]"
+        echo "usage: ${goal} application [version] [environment]"
         return 1
     else
         app="$2"
@@ -45,16 +45,16 @@ function shoehorn {
 
     if [ -z "$3" ]
     then
-        env="dev"
+        version="$(get_latest_version ${app})"
     else
-        env="$3"
+        version="$3"
     fi
 
     if [ -z "$4" ]
     then
-        version="$(get_latest_version ${app})"
+        env="dev"
     else
-        version="$4"
+        env="$4"
     fi
 
     mvn shoehorn:${goal} -DapplicationName=${app} -Dversion=${version} -DenvironmentName=${env}
@@ -95,11 +95,6 @@ completion_apps=(
   "superman:Superman"
 )
 
-completion_envs=(
-    "dev"
-    "dev2"
-)
-
 function listDeployCompletions {
     local ret=1
     local state
@@ -107,7 +102,7 @@ function listDeployCompletions {
     local state_descr
     local line
 
-    _arguments ':app:->app' ':env:->env' ':version:->version' && ret=0
+    _arguments ':app:->app' ':version:->version' && ret=0
 
     case $state in
         app)
@@ -123,9 +118,6 @@ function listDeployCompletions {
             )
             _describe -t versions 'shoehorn versions' versions && ret=0
             ;;
-        env)
-            _describe -t completion_envs 'shoehorn envs' completion_envs && ret=0
-            ;;
     esac
 
     return ret
@@ -138,7 +130,7 @@ function listStartStopCleanAndStatusCompletions {
     local state_descr
     local line
 
-    _arguments ':app:->app' ':env:->env' ':version:->version' && ret=0
+    _arguments ':app:->app' ':version:->version' && ret=0
 
     case $state in
         app)
@@ -146,22 +138,12 @@ function listStartStopCleanAndStatusCompletions {
             ;;
         version)
             local selected_app="${words[2]}"
-            local selected_env="${words[3]}"
+            local dirs="$(ls /data/apps/${selected_app})"
+            local remove_env_pattern="s/dev-//"
 
-            if [ "${selected_env}" = "dev" ]
-            then
-                local dirs="$(ls -l /data/apps/${selected_app} | awk '{print $9}' | xargs basename)"
-            else
-                local dirs="$(ssh -q nstream@${selected_env} ls -l /data/apps/${selected_app} | awk '{print $9}' | xargs basename)"
-            fi
-
-            local remove_env_pattern="s/${selected_env}-//"
             versions=("${(@f)$(echo $dirs | sed $remove_env_pattern)}")
 
             _describe -t versions 'shoehorn versions' versions && ret=0
-            ;;
-        env)
-            _describe -t completion_envs 'shoehorn envs' completion_envs && ret=0
             ;;
     esac
 
