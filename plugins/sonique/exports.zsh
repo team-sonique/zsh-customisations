@@ -12,5 +12,6 @@ export MAVEN3_VER=3.2.2
 export SVN_EDITOR=vim
 export VIMINIT='source ${ZDOTDIR}/exrc'
 export CDPATH=.:~/projects:~/trunk/netstream
+export HOMEBREW_GITHUB_API_TOKEN=f3713568a55f8d674c16c0ecc0e763d16731bcfd
 
 export PATH=.:$M2_HOME/bin:$ACTIVEMQ_HOME/bin:$JRUBY_HOME/bin:$ANT_HOME/bin:$PHANTOMJS_HOME/bin:$FIREFOX_HOME:$PATH
