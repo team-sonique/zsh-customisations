@@ -60,24 +60,33 @@ function shoehorn {
     mvn shoehorn:${goal} -DapplicationName=${app} -Dversion=${version} -DenvironmentName=${env}
 }
 
+function _shoehorn_local {
+    local goal=$1
+    local app=$2
+    local version="${3#*-}"
+    local env="${3%%-*}"
+
+    shoehorn $goal $app $version $env
+}
+
 function deploy {
     shoehorn deploy "$@"
 }
 
 function start {
-    shoehorn start "$@"
+    _shoehorn_local start "$@"
 }
 
 function stop {
-    shoehorn stop "$@"
+    _shoehorn_local stop "$@"
 }
 
 function status {
-    shoehorn status "$@"
+    _shoehorn_local status "$@"
 }
 
 function clean {
-    shoehorn clean "$@"
+    _shoehorn_local clean "$@"
 }
 
 completion_apps=(
@@ -102,7 +111,7 @@ function listDeployCompletions {
     local state_descr
     local line
 
-    _arguments ':app:->app' ':version:->version' && ret=0
+    _arguments ':app:->app' ':version:->version' ':env:->env' && ret=0
 
     case $state in
         app)
@@ -117,6 +126,15 @@ function listDeployCompletions {
                 "${version}:The latest version of ${selected_app}"
             )
             _describe -t versions 'shoehorn versions' versions && ret=0
+            ;;
+        env)
+            envs=(
+                "dev"
+                "dev2"
+                "ci"
+                "cvf"
+            )
+            _describe -t envs 'shoehorn envs' envs && ret=0
             ;;
     esac
 
@@ -139,9 +157,8 @@ function listStartStopCleanAndStatusCompletions {
         version)
             local selected_app="${words[2]}"
             local dirs="$(ls /data/apps/${selected_app})"
-            local remove_env_pattern="s/dev-//"
 
-            versions=("${(@f)$(echo $dirs | sed $remove_env_pattern)}")
+            versions=("${(@f)$(echo $dirs)}")
 
             _describe -t versions 'shoehorn versions' versions && ret=0
             ;;
