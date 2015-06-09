@@ -9,6 +9,8 @@ ARTIFACT_COORDINATES[redqueen]="sonique.redqueen:redqueen-core"
 ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
 ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
 
+typeset -A APP_VERSIONS
+
 function get_latest_version {
     local app="$1"
 
@@ -25,7 +27,8 @@ function get_latest_version {
 
     local APP_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
     local PROPERTIES_VERSION=`curl -s "${ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=libs-releases"`
-    VERSION="${APP_VERSION}-${PROPERTIES_VERSION}"
+
+    APP_VERSIONS[${app}]="${APP_VERSION}-${PROPERTIES_VERSION}"
 }
 
 function shoehorn {
@@ -42,7 +45,7 @@ function shoehorn {
     if [ -z "$3" ]
     then
         get_latest_version ${app}
-        version=${VERSION}
+        version=${APP_VERSIONS[$app]}
     else
         version="$3"
     fi
@@ -125,15 +128,16 @@ function listAppCompletions {
             ;;
         version)
             local selected_app="${words[2]}"
-            if [ "${APP}" != "${selected_app}" ]
+
+            if [ "${COMPLETION_LAST_SELECTED_APP}" != "${selected_app}" ]
             then
-                APP="${words[2]}"
-                get_latest_version ${APP}
+                COMPLETION_LAST_SELECTED_APP="${selected_app}"
+                get_latest_version ${selected_app}
             fi
 
             versions=(
-                "DEV-SNAPSHOT:Deploy the DEV-SNAPSHOT version of ${APP}"
-                "${VERSION}:Deploy the latest version of ${APP}"
+                "DEV-SNAPSHOT:Deploy the DEV-SNAPSHOT version of ${selected_app}"
+                "${APP_VERSIONS[$selected_app]}:Deploy the latest version of ${selected_app}"
             )
             _describe -t versions 'shoehorn versions' versions && ret=0
             ;;
