@@ -146,7 +146,7 @@ function _complete_versions_with_deployed_ones {
 function _complete_local_envs {
     _envs=(
         "dev:localhost"
-        "dev2:dev.sns.sky.com"
+        "dev2:dev2.sns.sky.com"
         "ci:a special local environment"
         "cvf:another special local environment, wired to talk to CVF"
     )
