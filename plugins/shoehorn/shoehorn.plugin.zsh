@@ -1,4 +1,5 @@
 _ARTIFACTORY="http://repo.sns.sky.com:8081/artifactory"
+_ARTIFACTORY_REPOSITORY="libs-releases-local"
 
 typeset -A _ARTIFACT_COORDINATES
 _ARTIFACT_COORDINATES[kiki]="sky.sns.kiki:kiki-core"
@@ -21,8 +22,8 @@ function _get_latest_version {
         local artifactId=${coordinate##*:}
     fi
 
-    local app_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=libs-releases"`
-    local properties_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=libs-releases"`
+    local app_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=${_ARTIFACTORY_REPOSITORY}"`
+    local properties_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=${_ARTIFACTORY_REPOSITORY}"`
 
     echo "${app_version}-${properties_version}"
 }
