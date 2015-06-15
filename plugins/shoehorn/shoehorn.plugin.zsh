@@ -1,5 +1,6 @@
 _ARTIFACTORY="http://repo.sns.sky.com:8081/artifactory"
 _ARTIFACTORY_REPOSITORY="libs-releases-local"
+_SHOEHORN_VERSION="385"
 
 typeset -A _ARTIFACT_COORDINATES
 _ARTIFACT_COORDINATES[kiki]="sky.sns.kiki:kiki-core"
@@ -57,7 +58,51 @@ function shoehorn {
         env="$4"
     fi
 
-    mvn shoehorn:${goal} -DapplicationName=${app} -Dversion=${version} -DenvironmentName=${env}
+    if [ ${goal} = "deploy" ]; then
+        local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
+        local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
+
+        echo "Using Shoehorn version ${_SHOEHORN_VERSION}"
+
+        if [ ! -f ${shoehorn_jar_path} ]; then
+            echo "Downloading Shoehorn..."
+            curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
+            echo "Done"
+        fi
+
+        java -jar ${shoehorn_jar_path} -app ${app} -compositeVersion ${version} -environment ${env}
+
+        return 0
+    fi
+
+    local app_dir="/data/apps/${app}/${env}-${version}"
+
+    if [ ! -d ${app_dir} ]; then
+        echo "No ${app} [${env}-${version}] found"
+        return 2
+    fi
+
+    case ${goal} in
+        start)
+            ${app_dir}/start.sh
+            ;;
+        stop)
+            ${app_dir}/stop.sh
+            ;;
+        status)
+            ${app_dir}/status.sh
+            ;;
+        clean)
+            ${app_dir}/status.sh -p 1>/dev/null
+            local exit_code=$?
+
+            if [ ${exit_code} = 0 ]; then
+                echo "Cannot clean ${app} [${env}-${version}] while it's running"
+            else
+                rm -rf ${app_dir} && echo "Cleaned ${app} [${env}-${version}]"
+            fi
+            ;;
+    esac
 }
 
 function _shoehorn_local {
