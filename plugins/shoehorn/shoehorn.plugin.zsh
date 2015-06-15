@@ -1,6 +1,6 @@
 _ARTIFACTORY="http://repo.sns.sky.com:8081/artifactory"
 _ARTIFACTORY_REPOSITORY="libs-releases-local"
-_SHOEHORN_VERSION="385"
+_SHOEHORN_VERSION="386"
 
 typeset -A _ARTIFACT_COORDINATES
 _ARTIFACT_COORDINATES[kiki]="sky.sns.kiki:kiki-core"
@@ -194,6 +194,7 @@ function _complete_local_envs {
         "dev2:dev2.sns.sky.com"
         "ci:a special local environment"
         "cvf:another special local environment, wired to talk to CVF"
+        "staging:another special local environment, wired to talk to PACE"
     )
 
     _describe -t _envs 'shoehorn envs' _envs
