@@ -76,6 +76,7 @@ function shoehorn {
     fi
 
     local app_dir="/data/apps/${app}/${env}-${version}"
+    local log_dir="/logs/apps/${app}/${env}-${version}"
 
     if [ ! -d ${app_dir} ]; then
         echo "No ${app} [${env}-${version}] found"
@@ -99,7 +100,7 @@ function shoehorn {
             if [ ${exit_code} = 0 ]; then
                 echo "Cannot clean ${app} [${env}-${version}] while it's running"
             else
-                rm -rf ${app_dir} && echo "Cleaned ${app} [${env}-${version}]"
+                rm -rf ${app_dir} ${log_dir} && echo "Cleaned ${app} [${env}-${version}]"
             fi
             ;;
     esac
@@ -132,6 +133,14 @@ function status {
 
 function clean {
     _shoehorn_local clean "$@"
+}
+
+function applog {
+    local app="$1"
+    local version="$2"
+    local logfile="$3"
+
+    less /logs/apps/${app}/${version}/${logfile}
 }
 
 function _complete_goals {
@@ -178,8 +187,9 @@ function _complete_versions_with_latest {
 }
 
 function _complete_versions_with_deployed_ones {
-    local selected_app="$1"
-    local dirs="$(ls /data/apps/${selected_app} 2>/dev/null)"
+    local basedir="$1"
+    local selected_app="$2"
+    local dirs="$(ls /${basedir}/apps/${selected_app} 2>/dev/null)"
 
     versions=("${(@f)$(echo $dirs)}")
 
@@ -198,6 +208,18 @@ function _complete_local_envs {
     )
 
     _describe -t _envs 'shoehorn envs' _envs
+}
+
+function _complete_logfiles {
+    local selected_app="$1"
+    local version="$2"
+    local logfile_paths="$(ls /logs/apps/${selected_app}/${version} 2>/dev/null)"
+
+    logfiles=("${(@f)$(echo $logfile_paths)}")
+
+    if [ ! -z "${logfiles[1]}" ]; then
+        _describe -t logfiles 'shoehorn app logfiles' logfiles
+    fi
 }
 
 function _list_shoehorn_completions {
@@ -219,7 +241,7 @@ function _list_shoehorn_completions {
             if [ "${goal}" = "deploy" ]; then
                 _complete_versions_with_latest ${app} && ret=0
             else
-                _complete_versions_with_deployed_ones ${app} && ret=0
+                _complete_versions_with_deployed_ones "data" ${app} && ret=0
             fi
             ;;
         env)
@@ -266,7 +288,27 @@ function _list_start_stop_clean_and_status_completions {
             _complete_apps && ret=0
             ;;
         version)
-            _complete_versions_with_deployed_ones ${words[2]} && ret=0
+            _complete_versions_with_deployed_ones "data" ${words[2]} && ret=0
+            ;;
+    esac
+
+    return ret
+}
+
+function _list_applog_completions {
+    local ret=1 state context state_descr line
+
+    _arguments ':app:->app' ':version:->version' ':logfile:->logfile' && ret=0
+
+    case ${state} in
+        app)
+            _complete_apps && ret=0
+            ;;
+        version)
+            _complete_versions_with_deployed_ones "logs" ${words[2]} && ret=0
+            ;;
+        logfile)
+            _complete_logfiles ${words[2]} ${words[3]} && ret=0
             ;;
     esac
 
@@ -280,3 +322,5 @@ for cmd in start status stop clean
 do
     compdef _list_start_stop_clean_and_status_completions ${cmd}
 done
+
+compdef _list_applog_completions applog
