@@ -3,13 +3,15 @@ _ARTIFACTORY_REPOSITORY="libs-releases-local"
 _SHOEHORN_VERSION="386"
 
 typeset -A _ARTIFACT_COORDINATES
-_ARTIFACT_COORDINATES[kiki]="sky.sns.kiki:kiki-core"
-_ARTIFACT_COORDINATES[gruffalo]="sonique.gruffalo:gruffalo-build"
-_ARTIFACT_COORDINATES[ffestiniog]="sonique.ffestiniog:ffestiniog-core"
-_ARTIFACT_COORDINATES[spm-sat]="sonique.spm-sat:spm-sat-core"
-_ARTIFACT_COORDINATES[redqueen]="sonique.redqueen:redqueen-core"
-_ARTIFACT_COORDINATES[superman]="sky.sns:superman-deploy"
-_ARTIFACT_COORDINATES[luthor]="sonique.luthor:luthor-core"
+_ARTIFACT_COORDINATES=(
+    kiki "sky.sns.kiki:kiki-core"
+    gruffalo "sonique.gruffalo:gruffalo-build"
+    ffestiniog "sonique.ffestiniog:ffestiniog-core"
+    spm-sat "sonique.spm-sat:spm-sat-core"
+    redqueen "sonique.redqueen:redqueen-core"
+    superman "sky.sns:superman-deploy"
+    luthor "sonique.luthor:luthor-core"
+)
 
 function _get_latest_version {
     local app="$1"
@@ -58,7 +60,15 @@ function shoehorn {
         env="$4"
     fi
 
+    local app_dir="/data/apps/${app}/${env}-${version}"
+    local log_dir="/logs/apps/${app}/${env}-${version}"
+
     if [ ${goal} = "deploy" ]; then
+        if [ -d ${app_dir} ]; then
+            echo "${app} [${env}-${version}] already deployed at ${app_dir}, skipping"
+            return 0
+        fi
+
         local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
         local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
 
@@ -74,9 +84,6 @@ function shoehorn {
 
         return 0
     fi
-
-    local app_dir="/data/apps/${app}/${env}-${version}"
-    local log_dir="/logs/apps/${app}/${env}-${version}"
 
     if [ ! -d ${app_dir} ]; then
         echo "No ${app} [${env}-${version}] found"
