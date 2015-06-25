@@ -39,12 +39,12 @@ function shoehorn {
         local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
         local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
 
-        echo "Using Shoehorn version ${_SHOEHORN_VERSION}"
+        echo "${_BOLD}${_TEXT_GREEN}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
 
         if [ ! -f ${shoehorn_jar_path} ]; then
-            echo "Downloading Shoehorn..."
+            echo "${_BOLD}${_TEXT_GREEN}Downloading Shoehorn...${_RESET_FORMATTING}"
             curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
-            echo "Done"
+            echo "${_BOLD}${_TEXT_GREEN}Done${_RESET_FORMATTING}"
         fi
 
         java -jar ${shoehorn_jar_path} -app ${app} -compositeVersion ${version} -environment ${env}
@@ -137,4 +137,3 @@ function appout {
 
     less "/data/apps/${app}/${version}/${app}.out"
 }
-
