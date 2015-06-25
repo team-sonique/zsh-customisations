@@ -64,7 +64,7 @@ function _list_shoehorn_completions {
 
     case ${state} in
         goal)
-            _complete_goals && ret=0
+            _complete_app_goals && ret=0
             ;;
         app)
             _complete_apps && ret=0
@@ -93,7 +93,25 @@ function _list_shoehorn_completions {
     return ret
 }
 
+function _list_aggregate_completions {
+    local ret=1 state context state_descr line
+
+    _arguments ':goal:->goal' ':aggregate:->aggregate'
+
+    case ${state} in
+        goal)
+            _complete_aggregate_goals && ret=0
+            ;;
+        aggregate)
+            _complete_aggregates && ret=0
+            ;;
+    esac
+
+    return ret
+}
+
 compdef _list_shoehorn_completions shoehorn
 compdef _list_deploy_completions deploy
 compdef _list_start_stop_clean_and_status_completions start status stop clean
 compdef _list_applog_completions applog
+compdef _list_aggregate_completions aggregate

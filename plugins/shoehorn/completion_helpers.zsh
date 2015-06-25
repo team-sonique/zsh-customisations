@@ -1,4 +1,5 @@
-function _complete_goals {
+function _complete_app_goals {
+    local -a goals
     goals=(
         "deploy:Deploy an app with Shoehorn"
         "start:Start an app with Shoehorn"
@@ -7,11 +8,25 @@ function _complete_goals {
         "clean:Remove an app with Shoehorn"
     )
 
-    _describe -t goals 'shoehorn goals' goals
+    _describe -t goals 'shoehorn app goals' goals
+}
+
+function _complete_aggregate_goals {
+    local -a goals
+    goals=(
+        "deploy:Deploy an aggregate with Shoehorn"
+        "start:Start an aggregate with Shoehorn"
+        "status:Check an aggregate's status with Shoehorn"
+        "stop:Stop an aggregate with Shoehorn"
+        "clean:Remove an aggregate with Shoehorn"
+    )
+
+    _describe -t goals 'shoehorn aggregate goals' goals
 }
 
 function _complete_apps {
-    _completion_apps=(
+    local -a completion_apps
+    completion_apps=(
       "aview:AView"
       "ffestiniog:Ffestiniog"
       "gruffalo:Gruffalo"
@@ -26,19 +41,31 @@ function _complete_apps {
       "superman:Superman"
     )
 
-    _describe -t _completion_apps 'shoehorn apps' _completion_apps
+    _describe -t completion_apps 'shoehorn apps' completion_apps
+}
+
+function _complete_aggregates {
+    local -a completion_aggregates
+    completion_aggregates=(
+      "provisioning:Kiki, Raiden, Gruffalo, Shovel"
+      "landlineassurance:AView, Optimus Primer"
+      "assurance:Superman, Ffestiniog, Luthor, Superman Show-and-Tell"
+    )
+
+    _describe -t completion_aggregates 'shoehorn aggregates' completion_aggregates
 }
 
 function _complete_versions_with_latest {
     local selected_app="$1"
     local version="$(_get_latest_version ${selected_app})"
+    local -a versions
 
-    _versions=(
+    versions=(
         "DEV-SNAPSHOT:The DEV-SNAPSHOT version of ${selected_app}"
         "${version}:The latest version of ${selected_app}"
     )
 
-    _describe -t _versions 'shoehorn latest versions' _versions
+    _describe -t versions 'shoehorn latest versions' versions
 }
 
 function _complete_versions_with_deployed_ones {
@@ -54,7 +81,8 @@ function _complete_versions_with_deployed_ones {
 }
 
 function _complete_local_envs {
-    _envs=(
+    local -a envs
+    envs=(
         "dev:localhost"
         "dev2:dev2.sns.sky.com"
         "ci:a special local environment"
@@ -62,7 +90,7 @@ function _complete_local_envs {
         "staging:another special local environment, wired to talk to PACE"
     )
 
-    _describe -t _envs 'shoehorn envs' _envs
+    _describe -t envs 'shoehorn envs' envs
 }
 
 function _complete_logfiles {

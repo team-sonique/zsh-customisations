@@ -2,14 +2,14 @@ function shoehorn {
     local goal version env app
 
     if [ -z "$1" ]; then
-        echo "usage: shoehorn goal application [version] [environment]"
+        echo "Usage: $0 {deploy|start|stop|status|clean} application [version] [environment]"
         return 1
     else
         goal="$1"
     fi
 
     if [ -z "$2" ]; then
-        echo "usage: ${goal} application [version] [environment]"
+        echo "Usage: ${goal} application [version] [environment]"
         return 1
     else
         app="$2"
@@ -76,6 +76,10 @@ function shoehorn {
             else
                 rm -rf ${app_dir} ${log_dir} && echo "Cleaned ${app} [${env}-${version}]"
             fi
+            ;;
+        *)
+            echo "Usage: $0 {deploy|start|stop|status|clean}"
+            exit 1
             ;;
     esac
 }
