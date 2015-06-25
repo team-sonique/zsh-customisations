@@ -118,5 +118,23 @@ function applog {
     local version="$2"
     local logfile="$3"
 
+    if [[ -z ${app} || -z ${version} || -z ${logfile} ]]; then
+        echo "Usage: $0 app version logfile"
+        return 1
+    fi
+
     less "/logs/apps/${app}/${version}/${logfile}"
 }
+
+function appout {
+    local app="$1"
+    local version="$2"
+
+    if [[ -z ${app} || -z ${version} ]]; then
+        echo "Usage: $0 app version"
+        return 1
+    fi
+
+    less "/data/apps/${app}/${version}/${app}.out"
+}
+
