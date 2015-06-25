@@ -1,3 +1,7 @@
+export BOLD=`tput bold`
+export TEXT_GREEN=`tput setaf 2`
+export RESET_FORMATTING=`tput sgr0`
+
 typeset -A _AGGREGATES
 _AGGREGATES=(
     provisioning "kiki raiden gruffalo shovel"
@@ -36,7 +40,7 @@ function aggregate {
     apps=(${(s: :)$(echo $aggregate)})
 
     for app in ${apps}; do
-        echo "> ${goal} ${app}"
+        echo "> ${BOLD}${TEXT_GREEN}${goal} ${app}${RESET_FORMATTING}"
         ${goal} ${app}
     done
 }
