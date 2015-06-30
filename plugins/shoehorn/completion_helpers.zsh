@@ -62,7 +62,7 @@ function _complete_versions_with_latest {
 
     versions=(
         "DEV-SNAPSHOT:The DEV-SNAPSHOT version of ${selected_app}"
-        "${version}:The latest version of ${selected_app}"
+        "${version}:The latest version of ${selected_app} (default)"
     )
 
     _describe -t versions 'shoehorn latest versions' versions
@@ -83,7 +83,7 @@ function _complete_versions_with_deployed_ones {
 function _complete_local_envs {
     local -a envs
     envs=(
-        "dev:localhost"
+        "dev:localhost (default)"
         "dev2:dev2.sns.sky.com"
         "ci:a special local environment"
         "cvf:another special local environment, wired to talk to CVF"
