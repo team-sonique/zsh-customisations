@@ -137,3 +137,28 @@ function appout {
 
     less "/data/apps/${app}/${version}/${app}.out"
 }
+
+function list-deployed-apps {
+    local app_dirs
+    typeset -a app_dirs
+    app_dirs=("${(@f)$(find /data/apps -depth 2 | sed 's/\/data\/apps\///g')}")
+
+    local apps
+    typeset -A apps
+
+    for app_dir in ${app_dirs}; do
+        local app="${app_dir%%/*}"
+        local version="${app_dir#*/}"
+
+        if [ -z ${apps[$app]} ]; then
+            apps[$app]=""
+        fi
+
+        apps[$app]+="$version"
+    done
+
+    for app in "${(@k)apps}"; do
+        echo "${_BOLD}${_TEXT_GREEN}${app}${_RESET_FORMATTING}:"
+        printf '- %s\n\n' ${(s: :)apps[$app]}
+    done
+}
