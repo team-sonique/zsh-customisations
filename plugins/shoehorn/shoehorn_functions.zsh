@@ -154,11 +154,11 @@ function list-deployed-apps {
             apps[$app]=""
         fi
 
-        apps[$app]+="$version"
+        apps[$app]+=" $version"
     done
 
     for app in "${(@k)apps}"; do
         echo "${_BOLD}${_TEXT_GREEN}${app}${_RESET_FORMATTING}:"
-        printf '- %s\n\n' ${(s: :)apps[$app]}
+        printf '- %s\n' ${(s: :)apps[$app]}
     done
 }
