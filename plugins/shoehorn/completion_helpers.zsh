@@ -73,6 +73,8 @@ function _complete_versions_with_deployed_ones {
     local selected_app="$2"
     local app_dirs="$(ls /${basedir}/apps/${selected_app} 2>/dev/null)"
 
+    local versions
+    typeset -a versions
     versions=("${(@f)$(echo $app_dirs)}")
 
     if [ ! -z "${versions[1]}" ]; then
@@ -83,7 +85,10 @@ function _complete_versions_with_deployed_ones {
 function _complete_versions_with_deployed_and_running_ones {
     local basedir="$1"
     local selected_app="$2"
-    local app_dirs="$(ls /${basedir}/apps/${selected_app} 2>/dev/null)"
+    local app_dirs
+    typeset -a app_dirs
+    app_dirs=("${(@f)$(ls /${basedir}/apps/${selected_app} 2>/dev/null)}")
+
     local running_apps
     typeset -a running_apps
 
@@ -96,10 +101,8 @@ function _complete_versions_with_deployed_and_running_ones {
         fi
     done
 
-    versions=("${(@f)$(echo $running_apps)}")
-
-    if [ ! -z "${versions[1]}" ]; then
-        _describe -t versions 'shoehorn deployed and running versions' versions
+    if [ ! -z "${running_apps[1]}" ]; then
+        _describe -t running_apps 'shoehorn deployed and running versions' running_apps
     fi
 }
 
