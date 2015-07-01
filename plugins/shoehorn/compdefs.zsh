@@ -30,7 +30,12 @@ function _list_start_stop_clean_and_status_completions {
             _complete_apps && ret=0
             ;;
         version)
-            _complete_versions_with_deployed_ones "data" ${words[2]} && ret=0
+            local goal="${words[1]}"
+            if [ $goal = "stop" ]; then
+                _complete_versions_with_deployed_and_running_ones "data" ${words[2]} && ret=0
+            else
+                _complete_versions_with_deployed_ones "data" ${words[2]} && ret=0
+            fi
             ;;
     esac
 
@@ -92,6 +97,8 @@ function _list_shoehorn_completions {
 
             if [ "${goal}" = "deploy" ]; then
                 _complete_versions_with_latest ${app} && ret=0
+            elif [ "${goal}" = "stop" ]; then
+                _complete_versions_with_deployed_and_running_ones "data" ${app} && ret=0
             else
                 _complete_versions_with_deployed_ones "data" ${app} && ret=0
             fi
