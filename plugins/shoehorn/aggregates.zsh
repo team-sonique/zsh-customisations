@@ -38,5 +38,13 @@ function aggregate {
     for app in ${apps}; do
         echo "> ${_BOLD}${_TEXT_YELLOW}${goal} ${app}${_RESET_FORMATTING}"
         ${goal} ${app}
+
+        # make sure we return if anything goes wrong
+        local exit_code=$?
+        if [ ${exit_code} != 0 ]; then
+            return ${exit_code}
+        fi
     done
+
+    return 0
 }

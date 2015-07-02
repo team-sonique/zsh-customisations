@@ -49,7 +49,7 @@ function shoehorn {
 
         java -jar ${shoehorn_jar_path} -app ${app} -compositeVersion ${version} -environment ${env}
 
-        return 0
+        return $?
     fi
 
     if [ ! -d ${app_dir} ]; then
@@ -79,7 +79,7 @@ function shoehorn {
             ;;
         *)
             echo "Usage: $0 {deploy|start|stop|status|clean}"
-            exit 1
+            return 1
             ;;
     esac
 }
