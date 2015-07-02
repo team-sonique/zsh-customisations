@@ -73,8 +73,7 @@ function _complete_versions_with_deployed_ones {
     local selected_app="$2"
     local app_dirs="$(ls /${basedir}/apps/${selected_app} 2>/dev/null)"
 
-    local versions
-    typeset -a versions
+    local -a versions
     versions=("${(@f)$(echo $app_dirs)}")
 
     if [ ! -z "${versions[1]}" ]; then
@@ -85,12 +84,10 @@ function _complete_versions_with_deployed_ones {
 function _complete_versions_with_deployed_and_running_ones {
     local basedir="$1"
     local selected_app="$2"
-    local app_dirs
-    typeset -a app_dirs
+    local -a app_dirs
     app_dirs=("${(@f)$(ls /${basedir}/apps/${selected_app} 2>/dev/null)}")
 
-    local running_apps
-    typeset -a running_apps
+    local -a running_apps
 
     for app_dir in $app_dirs; do
         /${basedir}/apps/${selected_app}/${app_dir}/status.sh -p 1>/dev/null

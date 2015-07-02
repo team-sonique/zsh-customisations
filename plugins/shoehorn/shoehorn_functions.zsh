@@ -139,12 +139,10 @@ function appout {
 }
 
 function list-deployed-apps {
-    local app_dirs
-    typeset -a app_dirs
+    local -a app_dirs
     app_dirs=("${(@f)$(find /data/apps -depth 2 | sed 's/\/data\/apps\///g')}")
 
-    local apps
-    typeset -A apps
+    local -A apps
 
     for app_dir in ${app_dirs}; do
         local app="${app_dir%%/*}"
@@ -154,26 +152,31 @@ function list-deployed-apps {
             apps[$app]=""
         fi
 
-        local status_script="/data/apps/${app_dir}/status.sh"
-
-        if [ ! -f ${status_script} ]; then
-            continue
-        fi
-
-        ${status_script} -p 1>/dev/null
-        local exit_code=$?
-
-        if [ ${exit_code} = 0 ]; then
-            local description="${version} ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}\n"
-        else
-            local description="$version\n"
-        fi
-
-        apps[$app]+="${description}"
+        apps[$app]+="$version "
     done
 
     for app in "${(@k)apps}"; do
         echo "${_BOLD}${_TEXT_YELLOW}${app}${_RESET_FORMATTING}:"
-        printf '- %s\n' ${(s:\n:)apps[$app]}
+        local -a app_versions
+        app_versions=("${(s: :)apps[$app]}")
+
+        for app_version in ${app_versions}; do
+            local status_script="/data/apps/${app}/${app_version}/status.sh"
+
+            if [ ! -f ${status_script} ]; then
+                continue
+            fi
+
+            local description="${app_version}"
+
+            ${status_script} -p 1>/dev/null
+            local exit_code=$?
+
+            if [ ${exit_code} = 0 ]; then
+                 description+=" ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}"
+            fi
+
+            printf '- %s\n' ${description}
+        done
     done
 }
