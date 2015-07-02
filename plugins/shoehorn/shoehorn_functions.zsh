@@ -39,12 +39,12 @@ function shoehorn {
         local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
         local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
 
-        echo "${_BOLD}${_TEXT_GREEN}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
+        echo "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
 
         if [ ! -f ${shoehorn_jar_path} ]; then
-            echo "${_BOLD}${_TEXT_GREEN}Downloading Shoehorn...${_RESET_FORMATTING}"
+            echo "${_BOLD}${_TEXT_YELLOW}Downloading Shoehorn...${_RESET_FORMATTING}"
             curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
-            echo "${_BOLD}${_TEXT_GREEN}Done${_RESET_FORMATTING}"
+            echo "${_BOLD}${_TEXT_YELLOW}Done${_RESET_FORMATTING}"
         fi
 
         java -jar ${shoehorn_jar_path} -app ${app} -compositeVersion ${version} -environment ${env}
@@ -154,11 +154,20 @@ function list-deployed-apps {
             apps[$app]=""
         fi
 
-        apps[$app]+=" $version"
+        /data/apps/${app_dir}/status.sh -p 1>/dev/null
+        local exit_code=$?
+
+        if [ ${exit_code} = 0 ]; then
+            local description="${version} ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}\n"
+        else
+            local description="$version\n"
+        fi
+
+        apps[$app]+="${description}"
     done
 
     for app in "${(@k)apps}"; do
-        echo "${_BOLD}${_TEXT_GREEN}${app}${_RESET_FORMATTING}:"
-        printf '- %s\n' ${(s: :)apps[$app]}
+        echo "${_BOLD}${_TEXT_YELLOW}${app}${_RESET_FORMATTING}:"
+        printf '- %s\n' ${(s:\n:)apps[$app]}
     done
 }

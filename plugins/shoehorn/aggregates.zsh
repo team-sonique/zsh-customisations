@@ -36,7 +36,7 @@ function aggregate {
     apps=(${(s: :)$(echo $aggregate)})
 
     for app in ${apps}; do
-        echo "> ${_BOLD}${_TEXT_GREEN}${goal} ${app}${_RESET_FORMATTING}"
+        echo "> ${_BOLD}${_TEXT_YELLOW}${goal} ${app}${_RESET_FORMATTING}"
         ${goal} ${app}
     done
 }
