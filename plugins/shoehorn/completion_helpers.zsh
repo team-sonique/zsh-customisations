@@ -90,7 +90,12 @@ function _complete_versions_with_deployed_and_running_ones {
     local -a running_apps
 
     for app_dir in $app_dirs; do
-        /${basedir}/apps/${selected_app}/${app_dir}/status.sh -p 1>/dev/null
+        local status_script="/${basedir}/apps/${selected_app}/${app_dir}/status.sh"
+        if [ ! -f ${status_script} ]; then
+            continue
+        fi
+
+        ${status_script} -p 1>/dev/null
         local exit_code=$?
 
         if [ ${exit_code} = 0 ]; then

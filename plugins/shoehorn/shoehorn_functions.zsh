@@ -68,8 +68,13 @@ function shoehorn {
             ${app_dir}/status.sh
             ;;
         clean)
-            ${app_dir}/status.sh -p 1>/dev/null
-            local exit_code=$?
+            local status_script="${app_dir}/status.sh"
+            if [ -f ${status_script} ]; then
+                ${status_script} -p 1>/dev/null
+                local exit_code=$?
+            else
+                local exit_code=255
+            fi
 
             if [ ${exit_code} = 0 ]; then
                 echo "Cannot clean ${app} [${env}-${version}] while it's running"
