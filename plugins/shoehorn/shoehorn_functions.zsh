@@ -154,7 +154,13 @@ function list-deployed-apps {
             apps[$app]=""
         fi
 
-        /data/apps/${app_dir}/status.sh -p 1>/dev/null
+        local status_script="/data/apps/${app_dir}/status.sh"
+
+        if [ ! -f ${status_script} ]; then
+            continue
+        fi
+
+        ${status_script} -p 1>/dev/null
         local exit_code=$?
 
         if [ ${exit_code} = 0 ]; then
