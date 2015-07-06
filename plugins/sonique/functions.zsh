@@ -61,7 +61,7 @@ function aview_stop {
 }
 
 function setLinks {
-    for dir in ~/.m2 ~/.gradle
+    for dir in ~/.m2
     do
         if [ ! -e ${dir} ]
         then
@@ -69,7 +69,7 @@ function setLinks {
         fi
     done
 
-    for file in ~/.m2/settings.xml ~/.gitconfig ~/.gitignore ~/gradle/init.gradle
+    for file in ~/.m2/settings.xml ~/.gitconfig ~/.gitignore
     do
         if [ -e ${file} ]
         then
@@ -80,6 +80,5 @@ function setLinks {
     ln -sfnv ~/projects/sonique-env/sonique-maven-settings.xml ~/.m2/settings.xml
     ln -sfnv ~/projects/sonique-env/gitconfig ~/.gitconfig
     ln -sfnv ~/projects/sonique-env/gitignore ~/.gitignore
-    ln -sfnv ~/projects/sonique-env/sonique-init.gradle ~/.gradle/init.gradle
     ln -sfnv ~/projects/sonique-env/ansible.cfg ~/.ansible.cfg
 }
