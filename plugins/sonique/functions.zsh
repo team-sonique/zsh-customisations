@@ -69,7 +69,7 @@ function setLinks {
         fi
     done
 
-    for file in ~/.m2/settings.xml ~/.gitconfig ~/.gitignore
+    for file in ~/.m2/settings.xml ~/.gitconfig ~/.gitignore ~/repository
     do
         if [ -e ${file} ]
         then
@@ -81,4 +81,5 @@ function setLinks {
     ln -sfnv ~/projects/sonique-env/gitconfig ~/.gitconfig
     ln -sfnv ~/projects/sonique-env/gitignore ~/.gitignore
     ln -sfnv ~/projects/sonique-env/ansible.cfg ~/.ansible.cfg
+    ln -sfnv ~/.m2/repository ~/repository
 }

@@ -32,21 +32,25 @@ function updateSoniqueEnvironment() {
   echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
 
-function cleanCasks() {
+function uninstallHomebrewCasks() {
   brew cask list | xargs brew cask uninstall
   brew cask cleanup
 }
 
-function cleanFomulae() {
+function uninstallHomebrewFomulae() {
   brew list | xargs brew uninstall
   brew cleanup
 }
 
-function cleanTaps() {
+function removeHomebrewTaps() {
   brew tap | xargs brew untap
 }
 
 function removeHomebrew() {
+  uninstallHomebrewCasks
+  uninstallHomebrewFomulae
+  removeHomebrewTaps
+
   rm -rf /usr/local/Cellar /usr/local/.git
   brew cleanup
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
