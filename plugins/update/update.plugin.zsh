@@ -32,6 +32,26 @@ function updateSoniqueEnvironment() {
   echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
 
+function cleanCasks() {
+  brew cask list | xargs brew cask uninstall
+  brew cask cleanup
+}
+
+function cleanFomulae() {
+  brew list | xargs brew uninstall
+  brew cleanup
+}
+
+function cleanTaps() {
+  brew tap | xargs brew untap
+}
+
+function removeHomebrew() {
+  rm -rf /usr/local/Cellar /usr/local/.git
+  brew cleanup
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+}
+
 day_seconds=$(expr 24 \* 60 \* 60)
 update_frequency=$(expr ${day_seconds} \* ${SONIQUE_UPDATE_DAYS})
 time_since_update=$(_check_interval)
