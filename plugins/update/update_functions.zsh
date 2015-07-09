@@ -47,9 +47,10 @@ function removeHomebrew() {
 
 function removeNonBrewApplications() {
     for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate' 'Google Chrome'; do
-        if [ -f /Applications/${app}.app ]; then
+        local appPath="/Applications/${app}.app"
+        if [ -f ${appPath} ] ||  [ -d ${appPath} ]; then
             echo "Removing ${app}"
-            rm -rf  /Applications/${app}.app
+            sudo rm -rf  ${appPath}
         fi
     done
 }
