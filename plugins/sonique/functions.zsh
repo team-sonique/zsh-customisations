@@ -41,13 +41,7 @@ function gclone {
 
 # Assurance View Functions
 function aview_deploy {
-    if [ -z "$1" ]
-    then
-        REVISION="DEV-SNAPSHOT"
-    else
-        REVISION="$1"
-    fi
-
+    local REVISION=${1:-DEV-SNAPSHOT}
     ~/projects/assuranceview/aview-pipeline/src/test/shell/deploy-aview.sh $REVISION dev revert
     ~/projects/assuranceview/aview-pipeline/src/test/shell/deploy-aview.sh $REVISION dev deploy
 }
@@ -61,27 +55,30 @@ function aview_stop {
 }
 
 function setLinks {
-    for dir in ~/.m2
-    do
-        if [ ! -e ${dir} ]
-        then
-            mkdir ${dir}
-        fi
-    done
+    {
+        function $0_link {
+            local target=$1
+            local link_name=$2
 
-    for file in ~/.m2/settings.xml ~/.gitconfig ~/.gitignore ~/repository ~/.atom
-    do
-        if [ -e ${file} ]
-        then
-            rm -f ${file}
-        fi
-    done
+            if [ -e ${target} ]; then
+                mkdir -p ${link_name%/*}
 
-    ln -sfnv ~/projects/sonique-env/dotfiles/gitconfig ~/.gitconfig
-    ln -sfnv ~/projects/sonique-env/dotfiles/gitignore ~/.gitignore
-    ln -sfnv ~/projects/sonique-env/dotfiles/ansible.cfg ~/.ansible.cfg
-    ln -sfnv ~/projects/sonique-env/dotfiles/atom ~/.atom
+                if [ -e ${link_name} ]; then
+                    rm -rf ${link_name}
+                fi
+                ln -sfnv ${target} ${link_name}
+            fi
+        }
+        
+        for linky in `ls $ZDOTDIR/dotfiles`
+        do
+          $0_link ${ZDOTDIR}/dotfiles/${linky} ~/.${linky}
+        done
 
-    ln -sfnv ~/.m2/repository ~/repository
-    ln -sfnv ~/projects/sonique-env/sonique-maven-settings.xml ~/.m2/settings.xml
+        $0_link ~/.m2/repository ~/repository
+        $0_link ${ZDOTDIR}/sonique-maven-settings.xml ~/.m2/settings.xml
+
+    } always {
+        unfunction $0_link
+    }
 }
