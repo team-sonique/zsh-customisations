@@ -19,6 +19,9 @@ function updateSoniqueEnvironment() {
   echo "Updating environment"
   git -C ${ZDOTDIR} pull origin master
 
+  echo "Removing Applications that will be reinstalled via brew Casks"
+  removeNonBrewApplications
+
   echo "Updating homebrew"
   brew update && brew upgrade
   brew tap homebrew/bundle && brew bundle --file=${ZDOTDIR}/Brewfile
@@ -56,12 +59,22 @@ function removeHomebrew() {
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
 }
 
+function removeNonBrewApplications() {
+  for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate'
+  do
+    if [ -f /Applications/${app}.app ]; then
+      echo "Removing ${app}"
+      rm -rf  /Applications/${app}.app
+    fi
+  done
+}
+
 day_seconds=$(expr 24 \* 60 \* 60)
 update_frequency=$(expr ${day_seconds} \* ${SONIQUE_UPDATE_DAYS})
 time_since_update=$(_check_interval)
 
 if [ ${time_since_update} -gt ${update_frequency} ]; then
-  echo "It has been $(expr ${time_since_update} / $day_seconds) days since your environment was updated"
+  echo "It has been $(expr ${time_since_update} / ${day_seconds}) days since your environment was updated"
   echo "Would you like to check for updates? [Y/n]: \c"
   read line
   if [ "$line" = Y ] || [ "$line" = y ]; then
