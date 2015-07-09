@@ -1,3 +1,5 @@
+local UPDATE_AUDIT_FILE='.sonique_lastupdate'
+
 function updateSoniqueEnvironment() {
     echo "Updating environment"
     git -C ${ZDOTDIR} pull origin master
@@ -65,8 +67,9 @@ function timeSinceLastUpdate() {
 }
 
 function startUpdateProcess () {
+    local updateThresholdDays=${1:-1}
     local day_seconds=$(expr 24 \* 60 \* 60)
-    local update_frequency=$(expr ${day_seconds} \* ${SONIQUE_UPDATE_DAYS})
+    local update_frequency=$(expr ${day_seconds} \* ${updateThresholdDays})
     local time_since_update=$(timeSinceLastUpdate)
     local line
 
