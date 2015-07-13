@@ -1,4 +1,4 @@
-_SHOEHORN_VERSION="388"
+_SHOEHORN_VERSION="389"
 
 _BOLD=`tput bold`
 _TEXT_GREEN=`tput setaf 2`
