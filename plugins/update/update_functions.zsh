@@ -1,5 +1,3 @@
-local UPDATE_AUDIT_FILE='.sonique_lastupdate'
-
 function updateSoniqueEnvironment() {
     echo "Updating environment"
     git -C ${ZDOTDIR} pull origin master
@@ -17,7 +15,7 @@ function updateSoniqueEnvironment() {
     echo "Resetting symlinks"
     setLinks
 
-    $(date +%s > ~/${UPDATE_AUDIT_FILE})
+    $(date +%s > ~/.sonique_lastupdate)
     echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
 
@@ -46,7 +44,7 @@ function removeHomebrew() {
 }
 
 function removeNonBrewApplications() {
-    for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate' 'Google Chrome' 'iTerm' 'SourceTree' 'Microsoft Lync' 'OpenOffice'; do
+    for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate' 'Google Chrome' 'iTerm' 'SourceTree' 'OpenOffice'; do
 
         local appPath="/Applications/${app}.app"
         if [ -e ${appPath} ] && [ ! -h ${appPath} ]; then
@@ -60,8 +58,8 @@ function timeSinceLastUpdate() {
     local now=$(date +%s)
     local last_update
 
-    if [ -f ~/${UPDATE_AUDIT_FILE} ]; then
-        last_update=$(cat ~/${UPDATE_AUDIT_FILE})
+    if [ -f ~/.sonique_lastupdate ]; then
+        last_update=$(cat ~/.sonique_lastupdate)
     else
         last_update=0
     fi
