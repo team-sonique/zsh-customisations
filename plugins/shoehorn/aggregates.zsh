@@ -1,11 +1,11 @@
-typeset -A _AGGREGATES
-_AGGREGATES=(
-    provisioning "kiki raiden gruffalo shovel"
-    landlineassurance "aview optimusprimer"
-    assurance "superman ffestiniog luthor spm-sat"
-)
-
 function aggregate {
+    local -A aggregates
+    aggregates=(
+        provisioning "kiki raiden gruffalo shovel"
+        landlineassurance "aview optimusprimer"
+        assurance "superman ffestiniog luthor spm-sat"
+    )
+
     local goal="$1"
     local aggregate_name="$2"
 
@@ -26,7 +26,7 @@ function aggregate {
             ;;
     esac
 
-    local aggregate=${_AGGREGATES[$aggregate_name]}
+    local aggregate=${aggregates[$aggregate_name]}
     if [ -z ${aggregate} ]; then
         echo "No aggregate named \"${aggregate_name}\" found"
         return 2
