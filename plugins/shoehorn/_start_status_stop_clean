@@ -1,0 +1,21 @@
+#compdef start status stop clean
+
+local ret=1 state context state_descr line
+
+_arguments ':app:->app' ':version:->version' && ret=0
+
+case ${state} in
+    app)
+        _complete_apps && ret=0
+        ;;
+    version)
+        local goal="${words[1]}"
+        if [ $goal = "stop" ]; then
+            _complete_versions_with_deployed_and_running_ones "data" ${words[2]} && ret=0
+        else
+            _complete_versions_with_deployed_ones "data" ${words[2]} && ret=0
+        fi
+        ;;
+esac
+
+return ret

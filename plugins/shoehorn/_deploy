@@ -1,0 +1,19 @@
+#compdef deploy
+
+local ret=1 state context state_descr line
+
+_arguments ':app:->app' ':version:->version' ':env:->env'
+
+case ${state} in
+    app)
+        _complete_apps && ret=0
+        ;;
+    version)
+        _complete_versions_with_latest ${words[2]} && ret=0
+        ;;
+    env)
+        _complete_local_envs && ret=0
+        ;;
+esac
+
+return ret

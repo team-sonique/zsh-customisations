@@ -1,0 +1,19 @@
+#compdef applog
+
+local ret=1 state context state_descr line
+
+_arguments ':app:->app' ':version:->version' ':logfile:->logfile' && ret=0
+
+case ${state} in
+    app)
+        _complete_apps && ret=0
+        ;;
+    version)
+        _complete_versions_with_deployed_ones "logs" ${words[2]} && ret=0
+        ;;
+    logfile)
+        _complete_logfiles ${words[2]} ${words[3]} && ret=0
+        ;;
+esac
+
+return ret
