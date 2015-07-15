@@ -4,7 +4,6 @@ _ARTIFACTORY_REPOSITORY="libs-releases-local"
 function _get_latest_version {
     local -A artifact_coordinates
     artifact_coordinates=(
-        kiki "sky.sns.kiki:kiki-core"
         gruffalo "sonique.gruffalo:gruffalo-build"
         ffestiniog "sonique.ffestiniog:ffestiniog-core"
         spm-sat "sonique.spm-sat:spm-sat-core"
@@ -24,8 +23,16 @@ function _get_latest_version {
         local artifactId=${coordinate##*:}
     fi
 
-    local app_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${artifactId}&repos=${_ARTIFACTORY_REPOSITORY}"`
-    local properties_version=`curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${groupId}&a=${app}-properties&repos=${_ARTIFACTORY_REPOSITORY}"`
+    {
+        function fetch_latest_version {
+            curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=$1&a=$2&repos=${_ARTIFACTORY_REPOSITORY}"
+        }
 
-    echo "${app_version}-${properties_version}"
+        local app_version=$(fetch_latest_version ${groupId} ${artifactId})
+        local properties_version=$(fetch_latest_version ${groupId} "${app}-properties")
+
+        echo "${app_version}-${properties_version}"
+    } always {
+        unfunction fetch_latest_version
+    }
 }
