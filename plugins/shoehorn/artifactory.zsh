@@ -13,7 +13,12 @@ function _get_latest_version {
     )
 
     local app="$1"
+    local repository="$2"
     local coordinate=${artifact_coordinates[$app]}
+
+    if [ -z ${repository} ]; then
+        repository=${_ARTIFACTORY_REPOSITORY}
+    fi
 
     if [ -z ${coordinate} ]; then
         local groupId="sonique.${app}"
@@ -25,11 +30,18 @@ function _get_latest_version {
 
     {
         function fetch_latest_version {
-            curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=$1&a=$2&repos=${_ARTIFACTORY_REPOSITORY}"
+            curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${1}&a=${2}&repos=${repository}"
         }
 
-        local app_version=$(fetch_latest_version ${groupId} ${artifactId})
-        local properties_version=$(fetch_latest_version ${groupId} "${app}-properties")
+        local app_version="$(fetch_latest_version ${groupId} ${artifactId})"
+        if [[ ${app_version} =~ '"status" : 404' ]]; then
+            return
+        fi
+
+        local properties_version="$(fetch_latest_version ${groupId} "${app}-properties")"
+        if [[ ${properties_version} =~ '"status" : 404' ]]; then
+            return
+        fi
 
         echo "${app_version}-${properties_version}"
     } always {

@@ -140,3 +140,6 @@ compdef _list_start_stop_clean_and_status_completions start status stop clean
 compdef _list_applog_completions applog
 compdef _list_appout_completions appout
 compdef _list_aggregate_completions aggregate
+
+# :completion:function:completer:command:argument:tag
+zstyle ':completion:*:*:deploy:*:*' sort false
