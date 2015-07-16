@@ -39,21 +39,6 @@ function gclone {
     git clone https://git.sns.sky.com/team-sonique/$1.git
 }
 
-# Assurance View Functions
-function aview_deploy {
-    local REVISION=${1:-DEV-SNAPSHOT}
-    ~/projects/assuranceview/aview-pipeline/src/test/shell/deploy-aview.sh $REVISION dev revert
-    ~/projects/assuranceview/aview-pipeline/src/test/shell/deploy-aview.sh $REVISION dev deploy
-}
-
-function aview_start {
-    /data/apps/aview/dev/start.sh
-}
-
-function aview_stop {
-    /data/apps/aview/dev/stop.sh
-}
-
 function setLinks {
     {
         function $0_link {
@@ -69,7 +54,7 @@ function setLinks {
                 ln -sfnv ${target} ${link_name}
             fi
         }
-        
+
         for linky in `ls $ZDOTDIR/dotfiles`
         do
           $0_link ${ZDOTDIR}/dotfiles/${linky} ~/.${linky}
