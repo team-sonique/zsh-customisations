@@ -32,7 +32,7 @@ function goJava7 {
 }
 
 function goJava8 {
-    export JAVA_HOME=`/usr/libexec/java_home -v '1.8.0_40'`
+    export JAVA_HOME=`/usr/libexec/java_home -v '1.8.0_51'`
 }
 
 function gclone {
