@@ -66,6 +66,21 @@ function timeSinceLastUpdate() {
     echo $(expr ${now} - ${last_update})
 }
 
+function checkForSoniqueEnvUpdates {
+    local dir=~/projects/sonique-env
+    local url="$(git -C ${dir} config --get remote.origin.url)"
+    local remote_version="$(git ls-remote ${url} HEAD | awk '{print $1}')"
+    local local_version="$(git -C ${dir} rev-parse HEAD)"
+
+    local bold=$(tput bold)
+    local text_yellow=$(tput setaf 3)
+    local reset_formatting=$(tput sgr0)
+
+    if [ ${remote_version} != ${local_version} ]; then
+        echo "${bold}${text_yellow}Your sonique-env is out of date${reset_formatting}"
+    fi
+}
+
 function startUpdateProcess () {
     local updateThresholdDays=${1:-1}
     local day_seconds=$(expr 24 \* 60 \* 60)
@@ -80,12 +95,15 @@ function startUpdateProcess () {
         if [ "$line" = Y ] || [ "$line" = y ]; then
             updateSoniqueEnvironment
         fi
+    else
+        checkForSoniqueEnvUpdates
     fi
 }
 
 function update_cleanup() {
     unfunction timeSinceLastUpdate
     unfunction startUpdateProcess
+    unfunction checkForSoniqueEnvUpdates
 
     unfunction $0
 }
