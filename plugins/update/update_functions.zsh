@@ -77,7 +77,7 @@ function checkForSoniqueEnvUpdates {
     local reset_formatting=$(tput sgr0)
 
     if [ ${remote_version} != ${local_version} ]; then
-        echo "${bold}${text_yellow}Your sonique-env is out of date${reset_formatting}"
+        echo "${bold}${text_yellow}Your sonique-env is out of sync${reset_formatting}"
     fi
 }
 
