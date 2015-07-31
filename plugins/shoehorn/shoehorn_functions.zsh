@@ -1,3 +1,18 @@
+function _run_shoehorn {
+    local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
+    local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
+
+    echo "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
+
+    if [ ! -f ${shoehorn_jar_path} ]; then
+        echo "${_BOLD}${_TEXT_YELLOW}Downloading Shoehorn...${_RESET_FORMATTING}"
+        curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
+        echo "${_BOLD}${_TEXT_YELLOW}Done${_RESET_FORMATTING}"
+    fi
+
+    java -cp ${shoehorn_jar_path} $@
+}
+
 function shoehorn {
     local goal version env app
 
@@ -36,18 +51,7 @@ function shoehorn {
             return 0
         fi
 
-        local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
-        local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
-
-        echo "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
-
-        if [ ! -f ${shoehorn_jar_path} ]; then
-            echo "${_BOLD}${_TEXT_YELLOW}Downloading Shoehorn...${_RESET_FORMATTING}"
-            curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
-            echo "${_BOLD}${_TEXT_YELLOW}Done${_RESET_FORMATTING}"
-        fi
-
-        java -jar ${shoehorn_jar_path} -app ${app} -compositeVersion ${version} -environment ${env}
+        _run_shoehorn shoehorn.pipeline.ShoehornWrapper -app ${app} -compositeVersion ${version} -environment ${env}
 
         return $?
     fi
@@ -116,6 +120,14 @@ function status {
 
 function clean {
     _shoehorn_local clean "$@"
+}
+
+function encrypt {
+    _run_shoehorn shoehorn.Encrypt $@
+}
+
+function decrypt {
+    _run_shoehorn shoehorn.Decrypt $@
 }
 
 function applog {

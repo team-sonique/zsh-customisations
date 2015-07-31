@@ -1,0 +1,13 @@
+#compdef encrypt decrypt
+
+local ret=1 state context state_descr line
+
+_arguments ':text:->text'
+
+case ${state} in
+    text)
+        ret=0
+        ;;
+esac
+
+return ret
