@@ -1,4 +1,4 @@
-#compdef encrypt decrypt
+#compdef decrypt
 
 local ret=1 state context state_descr line
 
