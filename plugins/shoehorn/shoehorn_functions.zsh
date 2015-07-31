@@ -1,13 +1,19 @@
+function _print_if_no_pipe {
+    if [ -t 1 ]; then
+        echo $@
+    fi
+}
+
 function _run_shoehorn {
     local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
     local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
 
-    echo "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
+    _print_if_no_pipe "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
 
     if [ ! -f ${shoehorn_jar_path} ]; then
-        echo "${_BOLD}${_TEXT_YELLOW}Downloading Shoehorn...${_RESET_FORMATTING}"
+        _print_if_no_pipe "${_BOLD}${_TEXT_YELLOW}Downloading Shoehorn...${_RESET_FORMATTING}"
         curl -s "${_ARTIFACTORY}/${_ARTIFACTORY_REPOSITORY}/sonique/shoehorn/shoehorn/${_SHOEHORN_VERSION}/${shoehorn_filename}" -o ${shoehorn_jar_path}
-        echo "${_BOLD}${_TEXT_YELLOW}Done${_RESET_FORMATTING}"
+        _print_if_no_pipe "${_BOLD}${_TEXT_YELLOW}Done${_RESET_FORMATTING}"
     fi
 
     java -cp ${shoehorn_jar_path} $@
