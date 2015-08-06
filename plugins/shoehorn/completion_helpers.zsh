@@ -124,6 +124,7 @@ function _complete_local_envs {
         "dev2:dev2.sns.sky.com"
         "ci:a special local environment"
         "cvf:another special local environment, wired to talk to CVF"
+        "external-integration:another special environment, wired to talk to BT CVF and TalkTalk Saturn"
         "staging:another special local environment, wired to talk to PACE"
     )
 

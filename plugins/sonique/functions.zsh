@@ -13,16 +13,6 @@ function tabname {
     fi
 }
 
-function killIdeaSupergirl {
-    ./target/data/apps/supergirl/superman/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
-    ./target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
-}
-
-function killMavenSupergirl {
-    ./supergirl-integration/target/data/apps/supergirl/superman/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
-    ./supergirl-integration/target/data/apps/supergirl/ffestiniog/dev-DEV-SNAPSHOT-DEV-SNAPSHOT/stop.sh -f
-}
-
 function goJava6 {
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 }

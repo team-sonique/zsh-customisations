@@ -1,4 +1,4 @@
-function updateSoniqueEnvironment() {
+function updateSoniqueEnvironment {
     echo "Updating environment"
     git -C ${ZDOTDIR} pull origin master
 
@@ -15,25 +15,27 @@ function updateSoniqueEnvironment() {
     echo "Resetting symlinks"
     setLinks
 
+    addSshKeys
+
     $(date +%s > ~/.sonique_lastupdate)
     echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
 
-function uninstallHomebrewCasks() {
+function uninstallHomebrewCasks {
     brew cask list | xargs brew cask uninstall
     brew cask cleanup
 }
 
-function uninstallHomebrewFomulae() {
+function uninstallHomebrewFomulae {
     brew list | xargs brew uninstall
     brew cleanup
 }
 
-function removeHomebrewTaps() {
+function removeHomebrewTaps {
     brew tap | xargs brew untap
 }
 
-function removeHomebrew() {
+function removeHomebrew {
     uninstallHomebrewCasks
     uninstallHomebrewFomulae
     removeHomebrewTaps
@@ -43,7 +45,7 @@ function removeHomebrew() {
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
 }
 
-function removeNonBrewApplications() {
+function removeNonBrewApplications {
     for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate' 'Google Chrome' 'iTerm' 'SourceTree' 'OpenOffice'; do
 
         local appPath="/Applications/${app}.app"
@@ -54,7 +56,7 @@ function removeNonBrewApplications() {
     done
 }
 
-function timeSinceLastUpdate() {
+function timeSinceLastUpdate {
     local now=$(date +%s)
     local last_update
 
@@ -81,7 +83,7 @@ function checkForSoniqueEnvUpdates {
     fi
 }
 
-function startUpdateProcess () {
+function startUpdateProcess {
     local updateThresholdDays=${1:-1}
     local day_seconds=$(expr 24 \* 60 \* 60)
     local update_frequency=$(expr ${day_seconds} \* ${updateThresholdDays})
@@ -92,7 +94,7 @@ function startUpdateProcess () {
         echo "It has been $(expr ${time_since_update} / ${day_seconds}) days since your environment was updated"
         echo "Would you like to check for updates? [Y/n]: \c"
         read line
-        if [ "$line" = Y ] || [ "$line" = y ]; then
+        if [ "${line}" = Y ] || [ "${line}" = y ]; then
             updateSoniqueEnvironment
         fi
     else
@@ -100,7 +102,17 @@ function startUpdateProcess () {
     fi
 }
 
-function update_cleanup() {
+function addSshKeys {
+    if ( [ -d ${ZDOTDIR}/ssh ] ); then
+        echo "Adding SSH keys"
+        for identityFile in `ls ${ZDOTDIR}/ssh/*_rsa`
+        do
+            ssh-add -K ${identityFile}
+        done
+    fi
+}
+
+function update_cleanup {
     unfunction timeSinceLastUpdate
     unfunction startUpdateProcess
     unfunction checkForSoniqueEnvUpdates
