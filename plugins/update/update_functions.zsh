@@ -107,6 +107,7 @@ function addSshKeys {
         echo "Adding SSH keys"
         for identityFile in `ls ${ZDOTDIR}/ssh/*_rsa`
         do
+            chmod 600 ${identityFile}
             ssh-add -K ${identityFile}
         done
     fi
