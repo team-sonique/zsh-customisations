@@ -57,3 +57,11 @@ function setLinks {
         unfunction $0_link
     }
 }
+
+function rebuildDatabase {
+    mvn package -pl ${PWD##*/}-sql -PrebuildDatabase
+}
+
+function upgradeDatabase {
+    mvn package -pl ${PWD##*/}-sql -PupgradeDatabase
+}
