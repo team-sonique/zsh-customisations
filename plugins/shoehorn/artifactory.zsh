@@ -8,7 +8,6 @@ function _get_latest_version {
         ffestiniog "sonique.ffestiniog:ffestiniog-core"
         spm-sat "sonique.spm-sat:spm-sat-core"
         redqueen "sonique.redqueen:redqueen-core"
-        superman "sky.sns:superman-deploy"
         luthor "sonique.luthor:luthor-core"
     )
 
