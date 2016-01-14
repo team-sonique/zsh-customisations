@@ -3,7 +3,7 @@ function aggregate {
     aggregates=(
         provisioning "kiki raiden gruffalo shovel"
         landlineassurance "aview optimusprimer"
-        assurance "superman ffestiniog luthor spm-sat gruffalo"
+        assurance "superman ffestiniog luthor shovel gruffalo"
     )
 
     local goal="$1"
