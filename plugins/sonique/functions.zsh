@@ -22,7 +22,12 @@ function goJava7 {
 }
 
 function goJava8 {
-    export JAVA_HOME=`/usr/libexec/java_home -v '1.8.0_51'`
+    if [ -z $1 ]
+    then
+        export JAVA_HOME=`/usr/libexec/java_home -v '1.8'`
+    else
+        export JAVA_HOME=`/usr/libexec/java_home -v "1.8.0_$1"`
+    fi
 }
 
 function gclone {
