@@ -17,8 +17,19 @@ function updateSoniqueEnvironment {
 
     addSshKeys
 
+    createDockerMachineAndStart
+
     $(date +%s > ~/.sonique_lastupdate)
     echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
+}
+
+function createDockerMachineAndStart {
+    docker-machine create default --driver virtualbox
+    configureDockerForShell
+}
+
+function configureDockerForShell {
+    eval $(docker-machine env default)
 }
 
 function uninstallHomebrewCasks {
@@ -98,6 +109,7 @@ function startUpdateProcess {
         fi
     else
         checkForSoniqueEnvUpdates
+        configureDockerForShell
     fi
 }
 
