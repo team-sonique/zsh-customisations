@@ -5,7 +5,7 @@ alias mih2='mvn clean install -DuseH2=true'
 alias mio='mvn clean install -PuseOracle'
 alias mior='mvn clean install -PuseOracle,rebuildDatabase'
 alias mistor='mvn clean install -DskipTests -PuseOracle,rebuildDatabase'
-alias idea='open . -a /Applications/IntelliJ\ IDEA\ 15.app'
+alias idea='open . -a /Applications/IntelliJ\ IDEA.app'
 alias h=history
 alias deleteUnversioned='svn st | grep ^\? | grep -v ".idea" | grep -v ".iml" | grep -v ".java" | grep -v ".patch" | grep -v ".xml" | cut -c7-500 | xargs rm -rvf'
 alias gs='git status --short'
