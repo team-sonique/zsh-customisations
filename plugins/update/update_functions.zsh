@@ -98,7 +98,6 @@ function startUpdateProcess {
         fi
     else
         checkForSoniqueEnvUpdates
-        configureDockerForShell
     fi
 }
 
