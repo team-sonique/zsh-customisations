@@ -7,6 +7,8 @@ function _print_if_no_pipe {
 function _run_shoehorn {
     local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
     local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
+    echo "shoehorn jar path: "
+    echo $shoehorn_jar_path
 
     _print_if_no_pipe "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
 
@@ -57,7 +59,7 @@ function shoehorn {
             return 0
         fi
 
-        _run_shoehorn shoehorn.pipeline.ShoehornWrapper -app ${app} -compositeVersion ${version} -environment ${env}
+        _run_shoehorn shoehorn.ShoehornWrapper -app ${app} -compositeVersion ${version} -environment ${env}
 
         return $?
     fi
