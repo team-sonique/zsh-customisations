@@ -9,6 +9,7 @@ function _get_latest_version {
         spm-sat "sonique.spm-sat:spm-sat-core"
         redqueen "sonique.redqueen:redqueen-core"
         luthor "sonique.luthor:luthor-core"
+        bullwinkle "sonique.bullwinkle:bullwinkle-core"
     )
 
     local app="$1"

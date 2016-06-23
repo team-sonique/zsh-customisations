@@ -49,7 +49,6 @@ function shoehorn {
     fi
 
     local app_dir="/data/apps/${app}/${env}-${version}"
-    local log_dir="/logs/apps/${app}/${env}-${version}"
 
     if [ ${goal} = "deploy" ]; then
         if [ -d ${app_dir} ]; then
@@ -62,41 +61,112 @@ function shoehorn {
         return $?
     fi
 
-    if [ ! -d ${app_dir} ]; then
-        echo "No ${app} [${env}-${version}] found"
-        return 2
+    if [ -n _is_docker_image ]; then
+        case ${goal} in
+            start)
+                _start_docker_app ${app}
+                return 0
+                ;;
+            stop)
+                _stop_docker_app ${app}
+                return 0;
+                ;;
+            clean)
+                _clean_docker_app ${app}
+                return 0;
+                ;;
+            status)
+                _status_docker_app ${app}
+                return 0
+                ;;
+        esac
+    else
+        if [ ! -d ${app_dir} ]; then
+            echo "No ${app} [${env}-${version}] found"
+            return 2
+        fi
+        case ${goal} in
+            start)
+                ${app_dir}/start.sh
+                ;;
+            stop)
+                ${app_dir}/stop.sh
+                ;;
+            status)
+                ${app_dir}/status.sh
+                ;;
+            clean)
+                local status_script="${app_dir}/status.sh"
+                if [ -f ${status_script} ]; then
+                    ${status_script} -p 1>/dev/null
+                    local exit_code=$?
+                else
+                    local exit_code=255
+                fi
+
+                if [ ${exit_code} = 0 ]; then
+                    echo "Cannot clean ${app} [${env}-${version}] while it's running"
+                else
+                    local log_dir="/logs/apps/${app}/${env}-${version}"
+                    rm -rf ${app_dir} ${log_dir} && echo "Cleaned ${app} [${env}-${version}]"
+                fi
+                ;;
+            *)
+                echo "Usage: $0 {deploy|start|stop|status|clean}"
+                return 1
+                ;;
+        esac
+    fi
+}
+
+function _is_docker_image {
+    local app_name=$1
+    return $(docker images | grep $app_name)
+}
+
+function _start_docker_app {
+    local app_name=$1
+    docker start $app_name > /dev/null
+
+    if [[ $? -eq 0 ]]; then
+        echo "$app_name started"
+        return 0
+    else
+        echo "$app_name failed to start"
+        return 1
+    fi
+}
+
+function _stop_docker_app {
+    local app_name=$1
+    docker stop --time=10 $app_name > /dev/null
+
+    if [[ $? -eq 0 ]]; then
+        echo "$app_name stopped"
+        return 0
+    else
+        echo "$app_name failed to stop"
+        return 1
+    fi
+}
+
+function _clean_docker_app {
+    local app_name=$1
+    docker rm -f $app_name
+    return 0
+}
+
+function _status_docker_app {
+    local app_name=$1
+    output=$(docker inspect --format='{{ .State.Status }}' $app_name 2> /dev/null)
+
+    if [[ $? -eq 1 ]]; then
+        echo "$app_name does not exist"
+    else
+        echo "$app_name is $output"
     fi
 
-    case ${goal} in
-        start)
-            ${app_dir}/start.sh
-            ;;
-        stop)
-            ${app_dir}/stop.sh
-            ;;
-        status)
-            ${app_dir}/status.sh
-            ;;
-        clean)
-            local status_script="${app_dir}/status.sh"
-            if [ -f ${status_script} ]; then
-                ${status_script} -p 1>/dev/null
-                local exit_code=$?
-            else
-                local exit_code=255
-            fi
-
-            if [ ${exit_code} = 0 ]; then
-                echo "Cannot clean ${app} [${env}-${version}] while it's running"
-            else
-                rm -rf ${app_dir} ${log_dir} && echo "Cleaned ${app} [${env}-${version}]"
-            fi
-            ;;
-        *)
-            echo "Usage: $0 {deploy|start|stop|status|clean}"
-            return 1
-            ;;
-    esac
+    return 0
 }
 
 function _shoehorn_local {
@@ -140,6 +210,11 @@ function applog {
     local app="$1"
     local version="$2"
     local logfile="$3"
+
+    if [ _is_docker_image=1 ]; then
+        docker logs ${app}
+        return 1;
+    fi
 
     if [[ -z ${app} || -z ${version} || -z ${logfile} ]]; then
         echo "Usage: $0 app version logfile"

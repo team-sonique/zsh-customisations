@@ -28,6 +28,7 @@ function _complete_apps {
     local -a completion_apps
     completion_apps=(
         "aview:AView"
+        "bullwinkle:Bullwinkle"
         "ffestiniog:Ffestiniog"
         "gruffalo:Gruffalo"
         "hector:Hector"
