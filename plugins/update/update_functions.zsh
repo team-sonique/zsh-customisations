@@ -17,6 +17,9 @@ function updateSoniqueEnvironment {
 
     addSshKeys
 
+    echo "Setting up default docker environment"
+    createDefaultDockerMachine
+
     $(date +%s > ~/.sonique_lastupdate)
     echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
@@ -109,6 +112,17 @@ function addSshKeys {
             chmod 600 ${identityFile}
             ssh-add -K ${identityFile}
         done
+    fi
+}
+
+function createDefaultDockerMachine {
+    if ( [ -x "$(/bin/bash command -v docker-machine > /dev/null)" ] ); then
+        echo "cannot create default machine. docker-machine is not installed."
+        return 1
+    else
+        docker-machine create -d virtualbox default
+        eval $(docker-machine env default)
+        return 0
     fi
 }
 
