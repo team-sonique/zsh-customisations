@@ -277,4 +277,22 @@ function list-deployed-apps {
             printf '- %s\n' ${description}
         done
     done
+
+    local -a docker_apps
+    OLD_IFS=$IFS
+    IFS=$'\n'
+    docker_apps=($(docker ps -a | awk 'FNR > 1 {print $2}'))
+    for docker_app in ${docker_apps}; do
+        docker_app_name=${docker_app%%:*}
+        echo "${_BOLD}${_TEXT_YELLOW}$docker_app_name${_RESET_FORMATTING}:"
+
+        local description=${docker_app##*:}
+
+        $(docker inspect --format='{{ .State.Running }}' $docker_app_name)
+        if [ $? -eq 0 ]; then
+            description+=" ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}"
+        fi
+
+        printf '- %s\n' ${description}
+    done
 }
