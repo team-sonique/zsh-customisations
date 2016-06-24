@@ -279,16 +279,22 @@ function list-deployed-apps {
     done
 
     local -a docker_apps
-    OLD_IFS=$IFS
     IFS=$'\n'
     docker_apps=($(docker ps -a | awk 'FNR > 1 {print $2}'))
     for docker_app in ${docker_apps}; do
-        docker_app_name=${docker_app%%:*}
-        echo "${_BOLD}${_TEXT_YELLOW}$docker_app_name${_RESET_FORMATTING}:"
 
-        local description=${docker_app##*:}
+        if [[ $docker_app == *'/'* ]]; then
+            IFS=/ read repo group app_image <<< ${docker_app}
+        else
+            app_image=${docker_app}
+        fi
 
-        $(docker inspect --format='{{ .State.Running }}' $docker_app_name)
+        IFS=: read image version <<< ${app_image}
+        echo "${_BOLD}${_TEXT_YELLOW}$image${_RESET_FORMATTING}:"
+
+        local description=${version}
+
+        $(docker inspect --format='{{ .State.Running }}' $image)
         if [ $? -eq 0 ]; then
             description+=" ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}"
         fi
