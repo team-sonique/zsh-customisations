@@ -61,7 +61,9 @@ function shoehorn {
         return $?
     fi
 
-    if [ -n _is_docker_image ]; then
+    local isDockerImage
+    isDockerImage="$(_is_docker_image ${app})"
+    if [ $? -eq 0 ]; then
         case ${goal} in
             start)
                 _start_docker_app ${app}
@@ -121,7 +123,16 @@ function shoehorn {
 
 function _is_docker_image {
     local app_name=$1
-    return $(docker images | grep $app_name)
+    local size
+    local -a imageArray
+    IFS=$'\n'
+    imageArray=($(docker images | grep ${app}))
+    size=${#imageArray[@]}
+    if [ $size -gt 0 ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 function _start_docker_app {
