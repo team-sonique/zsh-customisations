@@ -150,7 +150,7 @@ function _start_docker_app {
 
 function _stop_docker_app {
     local app_name=$1
-    docker stop --time=10 $app_name > /dev/null
+    output=$(docker stop --time=10 $app_name 2> /dev/null)
 
     if [[ $? -eq 0 ]]; then
         echo "$app_name stopped"
@@ -163,8 +163,15 @@ function _stop_docker_app {
 
 function _clean_docker_app {
     local app_name=$1
-    docker rm -f $app_name
-    return 0
+    output=$(docker rm -f $app_name 2> /dev/null)
+    
+    if [ $? -eq 0 ]; then
+        echo "Cleaned ${app_name}"
+        return 0
+    else
+        echo "No ${app_name} found"
+        return 1
+    fi
 }
 
 function _status_docker_app {
