@@ -29,6 +29,7 @@ function _complete_apps {
     completion_apps=(
         "aview:AView"
         "bullwinkle:Bullwinkle"
+        "dudley:Dudley"
         "ffestiniog:Ffestiniog"
         "gruffalo:Gruffalo"
         "hector:Hector"
