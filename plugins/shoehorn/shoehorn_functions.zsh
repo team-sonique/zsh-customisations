@@ -164,7 +164,7 @@ function _stop_docker_app {
 function _clean_docker_app {
     local app_name=$1
     output=$(docker rm -f $app_name 2> /dev/null)
-    
+
     if [ $? -eq 0 ]; then
         echo "Cleaned ${app_name}"
         return 0
@@ -229,7 +229,9 @@ function applog {
     local version="$2"
     local logfile="$3"
 
-    if [ _is_docker_image=1 ]; then
+    local isDockerImage
+    isDockerImage="$(_is_docker_image ${app})"
+    if [ $? -eq 0 ]; then
         docker logs ${app}
         return 1;
     fi
