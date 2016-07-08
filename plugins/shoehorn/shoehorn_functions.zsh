@@ -7,7 +7,7 @@ function _print_if_no_pipe {
 function _run_shoehorn {
     local shoehorn_filename="shoehorn-${_SHOEHORN_VERSION}-jar-with-dependencies.jar"
     local shoehorn_jar_path="${TMPDIR}/${shoehorn_filename}"
-
+    echo $shoehorn_jar_path
     _print_if_no_pipe "${_BOLD}${_TEXT_YELLOW}Using Shoehorn version ${_SHOEHORN_VERSION}${_RESET_FORMATTING}"
 
     if [ ! -f ${shoehorn_jar_path} ]; then
@@ -17,6 +17,16 @@ function _run_shoehorn {
     fi
 
     java -cp ${shoehorn_jar_path} $@
+}
+
+function _is_in_docker_repo {
+    local app="$1"
+    local response=$(curl --write-out %{http_code} --silent --output /dev/null "${_ARTIFACTORY}/docker-local/sns-is-dev/${app}")
+    if [[ ${response} -eq '404' ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 function shoehorn {
@@ -56,7 +66,13 @@ function shoehorn {
             return 0
         fi
 
-        _run_shoehorn shoehorn.ShoehornWrapper -app ${app} -compositeVersion ${version} -environment ${env}
+        local isInDockerRepo
+        isInDockerRepo="$(_is_in_docker_repo ${app})"
+        if [ $? -eq 0 ]; then
+            _run_shoehorn shoehorn.docker.ShoehornDockerWrapper -app ${app} -compositeVersion ${version} -environment ${env}
+        else
+            _run_shoehorn shoehorn.pipeline.ShoehornWrapper -app ${app} -compositeVersion ${version} -environment ${env}
+        fi
 
         return $?
     fi
