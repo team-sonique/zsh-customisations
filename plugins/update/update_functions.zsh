@@ -8,9 +8,6 @@ function updateSoniqueEnvironment {
     echo "Updating environment"
     git -C ${ZDOTDIR} pull origin master
 
-    echo "Removing Applications that will be reinstalled via brew Casks"
-    removeNonBrewApplications
-
     echo "Updating homebrew"
     brew update && brew upgrade
     brew tap homebrew/bundle && brew bundle --verbose --file=${ZDOTDIR}/Brewfile
@@ -49,17 +46,6 @@ function removeHomebrew {
     rm -rf /usr/local/Cellar /usr/local/.git
     brew cleanup
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
-}
-
-function removeNonBrewApplications {
-    for app in 'Dropbox' 'Atom' 'Firefox' 'IntelliJ IDEA 14' 'TextMate' 'Google Chrome' 'iTerm' 'SourceTree' 'OpenOffice'; do
-
-        local appPath="/Applications/${app}.app"
-        if [ -e ${appPath} ] && [ ! -h ${appPath} ]; then
-            echo "Removing ${app}"
-            sudo rm -rf  ${appPath}
-        fi
-    done
 }
 
 function timeSinceLastUpdate {
