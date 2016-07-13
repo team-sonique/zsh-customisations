@@ -1,4 +1,4 @@
-_SHOEHORN_VERSION="425"
+_SHOEHORN_VERSION="426"
 
 _BOLD=$(tput bold)
 _TEXT_GREEN=$(tput setaf 2)
