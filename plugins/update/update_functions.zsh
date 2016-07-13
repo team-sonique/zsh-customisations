@@ -1,4 +1,10 @@
+function exportHomebrewOptions() {
+    export HOMEBREW_CASK_OPTS="--appdir=/Applications --caskroom=/opt/homebrew-cask/Caskroom"
+}
+
 function updateSoniqueEnvironment {
+    exportHomebrewOptions
+
     echo "Updating environment"
     git -C ${ZDOTDIR} pull origin master
 
