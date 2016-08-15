@@ -34,6 +34,7 @@ function _complete_apps {
         "gruffalo:Gruffalo"
         "hector:Hector"
         "kiki:Kiki"
+        "kuro:Kuro"
         "luthor:Luthor"
         "optimusprimer:Optimus Primer"
         "raiden:Raiden"
