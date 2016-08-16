@@ -39,6 +39,7 @@ function _complete_apps {
         "optimusprimer:Optimus Primer"
         "raiden:Raiden"
         "redqueen:Red Queen"
+        "rocky:Rocky"
         "shovel:Shovel"
         "spm-sat:Superman Show-and-Tell"
         "superman:Superman"
