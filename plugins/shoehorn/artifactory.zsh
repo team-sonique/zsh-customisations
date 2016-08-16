@@ -11,6 +11,7 @@ function _get_latest_version {
         luthor "sonique.luthor:luthor-core"
         bullwinkle "sonique.bullwinkle:bullwinkle-core"
         dudley "sonique.dudley:dudley-core"
+        rocky "sonique.rocky:rocky-dist"
     )
 
     local app="$1"
