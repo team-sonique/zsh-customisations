@@ -70,3 +70,21 @@ function rebuildDatabase {
 function upgradeDatabase {
     mvn package -pl ${PWD##*/}-sql -PupgradeDatabase
 }
+
+function startDockerDatabase {
+    local app_name='oracle-12c'
+    output=$(docker inspect --format='{{ .State.Status }}' $app_name 2> /dev/null)
+
+    if [[ $? -eq 1 ]]; then
+        echo 'Creating local Docker database'
+        docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c > /dev/null
+    else
+        if [[ $output == 'running' ]]; then
+            #do nothing
+        else
+            echo 'Starting local Docker database'
+            docker start oracle-12c > /dev/null
+        fi
+    fi
+    echo "Docker database running on jdbc:oracle:thin:@//localhost:1521/db1"
+}
