@@ -1,5 +1,6 @@
 export FIREFOX_HOME=/Applications/Firefox.app/Contents/MacOS
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+export DATABASE_URL=jdbc:oracle:thin:@//localhost:1521/db1
 
 export SVN_EDITOR=vim
 export CDPATH=.:~/projects:~/trunk/netstream
