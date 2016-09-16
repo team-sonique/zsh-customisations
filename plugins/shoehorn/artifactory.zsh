@@ -10,6 +10,7 @@ function _get_latest_version {
         redqueen "sonique.redqueen:redqueen-core"
         luthor "sonique.luthor:luthor-core"
         bullwinkle "sonique.bullwinkle:bullwinkle-core"
+        sherman "sonique.sherman:sherman-core"
         dudley "sonique.dudley:dudley-core"
         rocky "sonique.rocky:rocky-dist"
     )
