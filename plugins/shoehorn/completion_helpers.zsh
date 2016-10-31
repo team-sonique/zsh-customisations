@@ -41,6 +41,7 @@ function _complete_apps {
         "redqueen:Red Queen"
         "rocky:Rocky"
         "sherman:Sherman"
+        "felix:Felix"
         "shovel:Shovel"
         "spm-sat:Superman Show-and-Tell"
         "superman:Superman"

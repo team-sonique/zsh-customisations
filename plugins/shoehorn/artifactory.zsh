@@ -13,6 +13,7 @@ function _get_latest_version {
         sherman "sonique.sherman:sherman-core"
         dudley "sonique.dudley:dudley-core"
         rocky "sonique.rocky:rocky-dist"
+        felix "sonique.felix:felix-dist"
     )
 
     local app="$1"
