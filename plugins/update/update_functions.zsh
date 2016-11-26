@@ -1,8 +1,13 @@
 function exportHomebrewOptions() {
-    export HOMEBREW_CASK_OPTS="--appdir=/Applications --caskroom=/opt/homebrew-cask/Caskroom"
+    export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 }
 
 function updateSoniqueEnvironment {
+    echo "${RED} Should use new 'updateEnvironment' command ${RED}"
+    updateEnvironment
+}
+
+function updateEnvironment {
     exportHomebrewOptions
 
     echo "Updating environment"
@@ -20,7 +25,7 @@ function updateSoniqueEnvironment {
 
     addSshKeys
 
-    $(date +%s > ~/.sonique_lastupdate)
+    $(date +%s > ~/.environment_lastupdate)
     echo "\n\n${RED}You will need to reopen a terminal session to benefit from any updates"
 }
 
@@ -52,15 +57,15 @@ function timeSinceLastUpdate {
     local now=$(date +%s)
     local last_update
 
-    if [ -f ~/.sonique_lastupdate ]; then
-        last_update=$(cat ~/.sonique_lastupdate)
+    if [ -f ~/.environment_lastupdate ]; then
+        last_update=$(cat ~/.environment_lastupdate)
     else
         last_update=0
     fi
     echo $(expr ${now} - ${last_update})
 }
 
-function checkForSoniqueEnvUpdates {
+function checkForEnvUpdates {
     local url="$(git -C ${ZDOTDIR} config --get remote.origin.url)"
     local remote_version="$(git ls-remote ${url} HEAD | awk '{print $1}')"
     local local_version="$(git -C ${ZDOTDIR} rev-parse HEAD)"
@@ -86,10 +91,10 @@ function startUpdateProcess {
         echo "Would you like to check for updates? [Y/n]: \c"
         read line
         if [ "${line}" = Y ] || [ "${line}" = y ]; then
-            updateSoniqueEnvironment
+            updateEnvironment
         fi
     else
-        checkForSoniqueEnvUpdates
+        checkForEnvUpdates
     fi
 }
 
@@ -107,7 +112,7 @@ function addSshKeys {
 function update_cleanup {
     unfunction timeSinceLastUpdate
     unfunction startUpdateProcess
-    unfunction checkForSoniqueEnvUpdates
+    unfunction checkForEnvUpdates
 
     unfunction $0
 }
