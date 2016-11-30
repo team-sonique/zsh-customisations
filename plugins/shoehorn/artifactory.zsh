@@ -14,6 +14,7 @@ function _get_latest_version {
         dudley "sonique.dudley:dudley-core"
         rocky "sonique.rocky:rocky-dist"
         felix "sonique.felix:felix-dist"
+        battenberg "sonique.battenberg:battenberg-dist"
     )
 
     local app="$1"
