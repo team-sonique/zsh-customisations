@@ -88,3 +88,21 @@ function startDockerDatabase {
     fi
     echo "Docker database running on jdbc:oracle:thin:@//localhost:1521/db1"
 }
+
+function startHazelcast {
+    local app_name='hazelcast'
+    output=$(docker inspect --format='{{ .State.Status }}' $app_name 2> /dev/null)
+
+    if [[ $? -eq 1 ]]; then
+        echo 'Creating local Hazelcast Instance'
+        docker run --name hazelcast -d -p 5701:5701 --net=sonique-network --net-alias=hazelcast hazelcast/hazelcast > /dev/null
+    else
+        if [[ $output == 'running' ]]; then
+            #do nothing
+        else
+            echo 'Starting local Hazelcast Instance'
+            docker start hazelcast > /dev/null
+        fi
+    fi
+    echo "Hazelcast Instance running at 127.0.0.1:5701"
+}
