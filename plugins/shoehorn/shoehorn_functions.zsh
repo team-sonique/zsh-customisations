@@ -320,7 +320,12 @@ function list-deployed-apps {
     for docker_app in ${docker_apps}; do
 
         if [[ $docker_app == *'/'* ]]; then
-            IFS=/ read repo group app_image <<< ${docker_app}
+            number_of_occurrences=$(grep -o "/" <<< "$docker_app" | wc -l)
+            if [ $number_of_occurrences -eq 2 ]; then
+                IFS=/ read repo group app_image <<< ${docker_app}
+            else 
+                IFS=/ read repo app_image <<< ${docker_app}
+            fi
         else
             app_image=${docker_app}
         fi
