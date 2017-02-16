@@ -21,11 +21,17 @@ function _run_shoehorn {
 
 function _is_in_docker_repo {
     local app="$1"
-    local response=$(curl --write-out %{http_code} --silent --output /dev/null "${_ARTIFACTORY}/docker-local/sns-is-dev/${app}")
-    if [[ ${response} -eq '404' ]]; then
+
+    echo ${app}
+    if [[ ${non_docker_overrides[(r)${app}]} == ${app} ]] ; then
         return 1
     else
-        return 0
+        local response=$(curl --write-out %{http_code} --silent --output /dev/null "${_ARTIFACTORY}/docker-local/sns-is-dev/${app}")
+        if [[ ${response} -eq '404' ]]; then
+            return 1
+        else
+            return 0
+        fi
     fi
 }
 
@@ -67,6 +73,7 @@ function shoehorn {
         fi
 
         local isInDockerRepo
+        echo "checking docker repo..."
         isInDockerRepo="$(_is_in_docker_repo ${app})"
         if [ $? -eq 0 ]; then
             _run_shoehorn shoehorn.docker.ShoehornDockerWrapper -app ${app} -compositeVersion ${version} -environment ${env}
@@ -144,10 +151,16 @@ function _is_docker_image {
     IFS=$'\n'
     imageArray=($(docker images | grep ${app}))
     size=${#imageArray[@]}
-    if [ $size -gt 0 ]; then
-        return 0
-    else
+
+    echo ${app}
+    if [[ ${non_docker_overrides[(r)${app}]} == ${app} ]] ; then
         return 1
+    else
+        if [ $size -gt 0 ]; then
+            return 0
+        else
+            return 1
+        fi
     fi
 }
 
@@ -323,7 +336,7 @@ function list-deployed-apps {
             number_of_occurrences=$(grep -o "/" <<< "$docker_app" | wc -l)
             if [ $number_of_occurrences -eq 2 ]; then
                 IFS=/ read repo group app_image <<< ${docker_app}
-            else 
+            else
                 IFS=/ read repo app_image <<< ${docker_app}
             fi
         else

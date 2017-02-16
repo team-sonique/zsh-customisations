@@ -1,6 +1,10 @@
 _ARTIFACTORY="http://repo.sns.sky.com:8081/artifactory"
 _ARTIFACTORY_REPOSITORY="libs-releases-local"
 
+non_docker_overrides=(
+    luthor
+)
+
 function _get_latest_version {
     local -A artifact_coordinates
     artifact_coordinates=(
