@@ -106,3 +106,13 @@ function startHazelcast {
     fi
     echo "Hazelcast Instance running at 127.0.0.1:5701"
 }
+
+function say {
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+    echo "SHUT UP Benjamin!!!"
+}
