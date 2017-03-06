@@ -97,7 +97,7 @@ function shoehorn {
                 return 0;
                 ;;
             clean)
-                _clean_docker_app ${app}
+                _clean_docker_app ${app} ${app_dir}
                 return 0;
                 ;;
             status)
@@ -192,6 +192,9 @@ function _stop_docker_app {
 
 function _clean_docker_app {
     local app_name=$1
+    local app_dir=$2
+
+    removeOutput=$(rm -rf $app_dir)
     output=$(docker rm -f $app_name 2> /dev/null)
 
     if [ $? -eq 0 ]; then
