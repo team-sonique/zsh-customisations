@@ -37,6 +37,7 @@ function _complete_apps {
         "kiki:Kiki"
         "kuro:Kuro"
         "luthor:Luthor"
+        "marzipan:Marzipan"
         "optimusprimer:Optimus Primer"
         "raiden:Raiden"
         "redqueen:Red Queen"
