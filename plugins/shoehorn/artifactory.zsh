@@ -19,6 +19,7 @@ function _get_latest_version {
         rocky "sonique.rocky:rocky-dist"
         felix "sonique.felix:felix-dist"
         battenberg "sonique.battenberg:battenberg-dist"
+        marzipan "sonique.marzipan:marzipan-dist"
     )
 
     local app="$1"
