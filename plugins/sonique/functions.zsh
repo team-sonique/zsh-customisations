@@ -77,7 +77,7 @@ function startDockerDatabase {
 
     if [[ $? -eq 1 ]]; then
         echo 'Creating local Docker database'
-        docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c:92 > /dev/null
+        docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c:94 > /dev/null
     else
         if [[ $output == 'running' ]]; then
             #do nothing
