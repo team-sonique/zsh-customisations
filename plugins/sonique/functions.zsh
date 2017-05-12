@@ -71,22 +71,45 @@ function upgradeDatabase {
     mvn package -pl ${PWD##*/}-sql -PupgradeDatabase
 }
 
+function startDatabases {
+    startDockerDatabase
+    startVdcDatabase
+}
+
 function startDockerDatabase {
     local app_name='oracle-12c'
     output=$(docker inspect --format='{{ .State.Status }}' $app_name 2> /dev/null)
 
     if [[ $? -eq 1 ]]; then
-        echo 'Creating local Docker database'
+        echo 'Creating local Docker database for Mobile apps'
         docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c:94 > /dev/null
     else
         if [[ $output == 'running' ]]; then
             #do nothing
         else
-            echo 'Starting local Docker database'
+            echo 'Starting local Docker database for Mobile apps'
             docker start oracle-12c > /dev/null
         fi
     fi
-    echo "Docker database running on jdbc:oracle:thin:@//localhost:1521/db1"
+    echo "Docker database for Mobile apps running on jdbc:oracle:thin:@//localhost:1521/db1"
+}
+
+function startVdcDatabase {
+    local app_name='oracle-12c-vdc'
+    output=$(docker inspect --format='{{ .State.Status }}' $app_name 2> /dev/null)
+
+    if [[ $? -eq 1 ]]; then
+        echo 'Creating local Docker database for VDC apps'
+        docker run --name oracle-12c-vdc -d -p 1525:1521 -p 5505:5500 --shm-size=2g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c-vdc repo.sns.sky.com:8085/sns-is-dev/oracle-12c-vdc:7 > /dev/null
+    else
+        if [[ $output == 'running' ]]; then
+            #do nothing
+        else
+            echo 'Starting local Docker database for VDC apps'
+            docker start oracle-12c-vdc > /dev/null
+        fi
+    fi
+    echo "Docker database for VDC apps running on jdbc:oracle:thin:@//localhost:1525/db1"
 }
 
 function startHazelcast {
