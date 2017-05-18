@@ -82,7 +82,7 @@ function startDockerDatabase {
 
     if [[ $? -eq 1 ]]; then
         echo 'Creating local Docker database for Mobile apps'
-        docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c:94 > /dev/null
+        docker run --name oracle-12c -d -p 1521:1521 -p 5500:5500 --shm-size=4g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c repo.sns.sky.com:8085/sns-is-dev/oracle-12c:102 > /dev/null
     else
         if [[ $output == 'running' ]]; then
             #do nothing
@@ -100,7 +100,7 @@ function startVdcDatabase {
 
     if [[ $? -eq 1 ]]; then
         echo 'Creating local Docker database for VDC apps'
-        docker run --name oracle-12c-vdc -d -p 1525:1521 -p 5505:5500 --shm-size=2g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c-vdc repo.sns.sky.com:8085/sns-is-dev/oracle-12c-vdc:7 > /dev/null
+        docker run --name oracle-12c-vdc -d -p 1525:1521 -p 5505:5500 --shm-size=2g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c-vdc repo.sns.sky.com:8085/sns-is-dev/oracle-12c-vdc:8 > /dev/null
     else
         if [[ $output == 'running' ]]; then
             #do nothing
@@ -138,7 +138,7 @@ function runBattenbergLoaderJob {
     echo "Running Battenberg Loader Job version $battenberg_loader_version"
     ip_addr=$(ipconfig getifaddr en0)
 
-    (set -x; docker run --rm --name battenberg-loader --net=sonique-network --net-alias=battenberg-loader -v /data:/app/data  -e "cluster.host=sonique-cluster.sns.sky.com" -e "npr.volume.mount.path=/app/npr" -e "replicas=3" -e "npr.volume.host.server=vm002544.bskyb.com" -e "repo.host=repo.sns.sky.com" -e "npr.volume.host.path=/home/sonique/nfs/npr" -e "npr.volume.name=npr-ftp" -e "limits.memory=4Gi" -e "nodePort=30030" -e "repo.port=8085" -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "service.summary.status.path=status" -e "app.data.integrity.ignore.window.mins=15" -e "loader.schedule=*/1 * * * *" -e "jdbc.connection.user=battenberg_owner" -e "app.file.directory=/app/data/npr" -e "jdbc.connection.password=battenberg" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1" -e "app.port=8087" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BATTENBERG_1" -e "service.summary.lookup.path=service" -e "service.summary.base.uri=http://$ip_addr:11565/repoman/" -e TZ=Europe/London repo.sns.sky.com:8085/sns-is-dev/battenberg-loader:$battenberg_loader_version)
+    (set -x; docker run --rm --name battenberg-loader --net=sonique-network --net-alias=battenberg-loader -v /data:/app/data  -e "cluster.host=sonique-cluster.sns.sky.com" -e "npr.volume.mount.path=/app/npr" -e "replicas=3" -e "npr.volume.host.server=vm002544.bskyb.com" -e "repo.host=repo.sns.sky.com" -e "npr.volume.host.path=/home/sonique/nfs/npr" -e "npr.volume.name=npr-ftp" -e "limits.memory=4Gi" -e "nodePort=30030" -e "repo.port=8085" -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "service.summary.status.path=status" -e "app.data.integrity.ignore.window.mins=15" -e "loader.schedule=*/1 * * * *" -e "jdbc.connection.user=battenberg_user" -e "app.file.directory=/app/data/npr" -e "jdbc.connection.password=battenberg" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c-vdc:1521/db1" -e "app.port=8087" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BATTENBERG_1" -e "service.summary.lookup.path=service" -e "service.summary.base.uri=http://$ip_addr:11565/repoman/" -e TZ=Europe/London repo.sns.sky.com:8085/sns-is-dev/battenberg-loader:$battenberg_loader_version)
 }
 
 function say {
