@@ -32,6 +32,7 @@ function _complete_apps {
         "bullwinkle:Bullwinkle"
         "dudley:Dudley"
         "ffestiniog:Ffestiniog"
+        "garibaldi:Garibaldi"
         "gruffalo:Gruffalo"
         "hector:Hector"
         "kiki:Kiki"

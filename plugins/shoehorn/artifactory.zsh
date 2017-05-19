@@ -20,6 +20,7 @@ function _get_latest_version {
         felix "sonique.felix:felix-dist"
         battenberg "sonique.battenberg:battenberg-dist"
         marzipan "sonique.marzipan:marzipan-dist"
+        garibaldi "sonique.garibaldi:garibaldi-core"
     )
 
     local app="$1"
