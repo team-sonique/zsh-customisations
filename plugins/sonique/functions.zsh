@@ -141,6 +141,26 @@ function runBattenbergLoaderJob {
     (set -x; docker run --rm --name battenberg-loader --net=sonique-network --net-alias=battenberg-loader -v /data:/app/data  -e "cluster.host=sonique-cluster.sns.sky.com" -e "npr.volume.mount.path=/app/npr" -e "replicas=3" -e "npr.volume.host.server=vm002544.bskyb.com" -e "repo.host=repo.sns.sky.com" -e "npr.volume.host.path=/home/sonique/nfs/npr" -e "npr.volume.name=npr-ftp" -e "limits.memory=4Gi" -e "nodePort=30030" -e "repo.port=8085" -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "service.summary.status.path=status" -e "app.data.integrity.ignore.window.mins=15" -e "loader.schedule=*/1 * * * *" -e "jdbc.connection.user=battenberg_user" -e "app.file.directory=/app/data/npr" -e "jdbc.connection.password=battenberg" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c-vdc:1521/db1" -e "app.port=8087" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BATTENBERG_2" -e "service.summary.lookup.path=service" -e "service.summary.base.uri=http://$ip_addr:11565/repoman/" -e TZ=Europe/London repo.sns.sky.com:8085/sns-is-dev/battenberg-loader:$battenberg_loader_version)
 }
 
+function runBullwinkleWriterJob {
+    local bullwinkle_writer_version=$1
+    if [ -e ${bullwinkle_writer_version} ]; then
+        bullwinkle_writer_version=$(curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=sonique.bullwinkle&a=bullwinkle-file-writer&repos=libs-releases-local")
+    fi
+    echo "Running Bullwinkle File Writer Job version $bullwinkle_writer_version"
+
+    (set -x; docker run --rm --name bullwinkle-file-writer --net=sonique-network --net-alias=bullwinkle-file-writer -v /data:/app/data -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "app.maxEntries=30000" -e "app.port=8080" -e "app.notificationDeliveryAttemptLimit=5" -e "app.requestTimeoutInMinutes=5" -e "jdbc.connection.user=bullwinkle_user" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1" -e "jdbc.connection.password=bullwinkle" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BULLWINKLE_6" -e TZ=Europe/London -e "tuk.record.actionUnblock=R" -e "tuk.record.operator=SKY" -e "tuk.record.blockReasonCode=0011" -e "tuk.record.filePrefix=SKY_CEIR_" -e "tuk.record.unblockSource=Removed on behalf of Sky" -e "tuk.record.headerIdentifier=10" -e "tuk.record.recordSpecificationVersion=01" -e "tuk.record.createdDatePattern=yyMMdd" -e "tuk.record.colouredList=B" -e "tuk.record.unblockReasonCode=0014" -e "tuk.record.actionBlock=I" -e "tuk.record.blockSource=Blocked on behalf of Sky" -e "tuk.record.organisationId=GBRKY" -e "tuk.record.bodyIdentifier=55" -e "tuk.record.destinationDir=/app/data/ftphome/ceir/tuk/tukceir01" -e "tuk.record.footerIdentifier=90" -e "tuk.record.fileExtension=UPD" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-file-writer:$bullwinkle_writer_version)
+}
+
+function runBullwinkleReaderJob {
+    local bullwinkle_reader_version=$1
+    if [ -e ${bullwinkle_reader_version} ]; then
+        bullwinkle_reader_version=$(curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=sonique.bullwinkle&a=bullwinkle-file-reader&repos=libs-releases-local")
+    fi
+    echo "Running Bullwinkle File Reader Job version $bullwinkle_reader_version"
+
+    (set -x; docker run --rm --name bullwinkle-file-reader --net=sonique-network --net-alias=bullwinkle-file-reader -v /data:/app/data -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "jdbc.connection.user=bullwinkle_user" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1" -e "jdbc.connection.password=bullwinkle" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource"  -e "database.edition=BULLWINKLE_6" -e TZ=Europe/London -e "tuk.record.filePrefix=SKY_CEIR_" -e "tuk.record.destinationDir=/app/data/ftphome/ceir/tuk/tukceir01" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-file-reader:$bullwinkle_reader_version)
+}
+
 function say {
     echo "SHUT UP Benjamin!!!"
     echo "SHUT UP Benjamin!!!"
