@@ -167,8 +167,11 @@ function runBullwinkleNotifierJob {
         bullwinkle_notifier_version=$(curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=sonique.bullwinkle&a=bullwinkle-notifier&repos=libs-releases-local")
     fi
     echo "Running Bullwinkle Notifier Job version $bullwinkle_notifier_version"
-
-    (set -x; docker run --rm --name bullwinkle-notifier '--net=sonique-network' '--net-alias=bullwinkle-notifier' -v /data:/app/data -e 'jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory' -e 'jdbc.connection.user=bullwinkle_user' -e 'jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1' -e 'jdbc.connection.password=bullwinkle' -e 'jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource' -e 'database.edition=BULLWINKLE_6' -e TZ=Europe/London -e 'operator.port=11565' -e 'operator.hostAddress=http://10.241.16.18' -e 'operator.writeEndpoint=/troll/llustreamplus/web/showAndTellController.html' -e 'operator.statusEndpoint=/troll/status' -e "app.maxEntries=30000" -e "app.port=8080" -e "app.notificationDeliveryAttemptLimit=5" -e "app.requestTimeoutInMinutes=5" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-notifier:$bullwinkle_notifier_version)
+    local ip_addr=$(ipconfig getifaddr en1)
+    if [ -e $ip_addr ]; then
+        $ip_addr = $(ipconfig getifaddr en0)
+    fi
+    (set -x; docker run --rm --name bullwinkle-notifier '--net=sonique-network' '--net-alias=bullwinkle-notifier' -v /data:/app/data -e 'jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory' -e 'jdbc.connection.user=bullwinkle_user' -e 'jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1' -e 'jdbc.connection.password=bullwinkle' -e 'jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource' -e 'database.edition=BULLWINKLE_6' -e TZ=Europe/London -e 'operator.port=11565' -e "operator.hostAddress=http://$ip_addr" -e 'operator.writeEndpoint=/troll/llustreamplus/web/showAndTellController.html' -e 'operator.statusEndpoint=/troll/status' -e "app.maxEntries=30000" -e "app.port=8080" -e "app.notificationDeliveryAttemptLimit=5" -e "app.requestTimeoutInMinutes=5" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-notifier:$bullwinkle_notifier_version)
 }
 
 function runBullwinkleStaleRequestsJob {
@@ -177,8 +180,11 @@ function runBullwinkleStaleRequestsJob {
         bullwinkle_stale_requests_version=$(curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=sonique.bullwinkle&a=bullwinkle-stale-requests&repos=libs-releases-local")
     fi
     echo "Running Bullwinkle Stale Requests Job version $bullwinkle_stale_requests_version"
-
-    (set -x; docker run --rm --name bullwinkle-stale-requests '--net=sonique-network' '--net-alias=bullwinkle-stale-requests' -v /data:/app/data -e 'jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory' -e 'jdbc.connection.user=bullwinkle_user' -e 'jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1' -e 'jdbc.connection.password=bullwinkle' -e 'jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource' -e 'database.edition=BULLWINKLE_6' -e TZ=Europe/London -e 'operator.port=11565' -e 'operator.hostAddress=http://10.241.16.18' -e 'operator.writeEndpoint=/troll/llustreamplus/web/showAndTellController.html' -e 'operator.statusEndpoint=/troll/status' -e "app.maxEntries=30000" -e "app.port=8080" -e "app.notificationDeliveryAttemptLimit=5" -e "app.requestTimeoutInMinutes=5" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-stale-requests:$bullwinkle_stale_requests_version)
+    local ip_addr=$(ipconfig getifaddr en1)
+    if [ -e $ip_addr ]; then
+        $ip_addr = $(ipconfig getifaddr en0)
+    fi
+    (set -x; docker run --rm --name bullwinkle-stale-requests '--net=sonique-network' '--net-alias=bullwinkle-stale-requests' -v /data:/app/data -e 'jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory' -e 'jdbc.connection.user=bullwinkle_user' -e 'jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1' -e 'jdbc.connection.password=bullwinkle' -e 'jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource' -e 'database.edition=BULLWINKLE_6' -e TZ=Europe/London -e 'operator.port=11565' -e "operator.hostAddress=http://$ip_addr" -e 'operator.writeEndpoint=/troll/llustreamplus/web/showAndTellController.html' -e 'operator.statusEndpoint=/troll/status' -e "app.maxEntries=30000" -e "app.port=8080" -e "app.notificationDeliveryAttemptLimit=5" -e "app.requestTimeoutInMinutes=5" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-stale-requests:$bullwinkle_stale_requests_version)
 }
 
 function say {
