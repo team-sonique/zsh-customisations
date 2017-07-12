@@ -158,7 +158,7 @@ function runBullwinkleReaderJob {
     fi
     echo "Running Bullwinkle File Reader Job version $bullwinkle_reader_version"
 
-    (set -x; docker run --rm --name bullwinkle-file-reader --net=sonique-network --net-alias=bullwinkle-file-reader -v /data:/app/data -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "jdbc.connection.user=bullwinkle_user" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1" -e "jdbc.connection.password=bullwinkle" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource"  -e "database.edition=BULLWINKLE_6" -e TZ=Europe/London -e "tuk.record.filePrefix=SKY_CEIR_" -e "tuk.record.destinationDir=/app/data/ftphome/ceir/tuk/tukceir01" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-file-reader:$bullwinkle_reader_version)
+    (set -x; docker run --rm --name bullwinkle-file-reader --net=sonique-network --net-alias=bullwinkle-file-reader -v /data:/app/data -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "jdbc.connection.user=bullwinkle_user" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c:1521/db1" -e "jdbc.connection.password=bullwinkle" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource"  -e "database.edition=BULLWINKLE_6" -e TZ=Europe/London -e "tuk.record.filePrefix=SKY_CEIR_" -e "file.retentionPeriodInDays=7" -e "tuk.record.destinationDir=/app/data/ftphome/ceir/tuk/tukceir01" repo.sns.sky.com:8085/sns-is-dev/bullwinkle-file-reader:$bullwinkle_reader_version)
 }
 
 function runBullwinkleNotifierJob {
