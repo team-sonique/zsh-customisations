@@ -21,6 +21,7 @@ function _get_latest_version {
         battenberg "sonique.battenberg:battenberg-dist"
         marzipan "sonique.marzipan:marzipan-dist"
         garibaldi "sonique.garibaldi:garibaldi-core"
+        macaroon "sonique.macaroon:macaroon-core"
     )
 
     local app="$1"
