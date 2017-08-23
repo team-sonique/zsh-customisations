@@ -22,6 +22,7 @@ function _get_latest_version {
         marzipan "sonique.marzipan:marzipan-dist"
         garibaldi "sonique.garibaldi:garibaldi-core"
         macaroon "sonique.macaroon:macaroon-core"
+        eclair "sonique.eclair:eclair-core"
     )
 
     local app="$1"

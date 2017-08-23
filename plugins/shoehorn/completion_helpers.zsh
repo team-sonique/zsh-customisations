@@ -31,6 +31,7 @@ function _complete_apps {
         "battenberg:Battenberg"
         "bullwinkle:Bullwinkle"
         "dudley:Dudley"
+        "eclair:Eclair"
         "ffestiniog:Ffestiniog"
         "garibaldi:Garibaldi"
         "gruffalo:Gruffalo"
