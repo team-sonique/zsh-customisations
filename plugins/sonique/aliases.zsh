@@ -11,3 +11,9 @@ alias deleteUnversioned='svn st | grep ^\? | grep -v ".idea" | grep -v ".iml" | 
 alias gs='git status --short'
 alias update-bundle='brew tap homebrew/bundle && brew bundle --file=${ZDOTDIR}/Brewfile'
 alias removeKnowHostBuildAgents='sed -i "" "/^ba*/d" ~/.ssh/known_hosts'
+
+
+alias gws='git status --short'
+alias gwS='git status'
+alias gfr='git pull --rebase'
+alias gia='git add'
