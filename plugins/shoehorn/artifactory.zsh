@@ -18,16 +18,36 @@ function _get_latest_version {
         dudley "sonique.dudley:dudley-core"
         rocky "sonique.rocky:rocky-dist"
         felix "sonique.felix:felix-dist"
-        battenberg "sonique.battenberg:battenberg-dist"
-        marzipan "sonique.marzipan:marzipan-dist"
-        garibaldi "sonique.garibaldi:garibaldi-core"
-        macaroon "sonique.macaroon:macaroon-core"
-        eclair "sonique.eclair:eclair-core"
+        battenberg "charts:battenberg-chart"
+        marzipan "charts:marzipan-chart"
+        garibaldi "charts:garibaldi-chart"
+        macaroon "charts:macaroon-chart"
+        eclair "charts:eclair-chart"
+    )
+
+    local -A properties_coordinates
+    properties_coordinates=(
+        battenberg "sonique.battenberg:battenberg-properties"
+        eclair "sonique.eclair:eclair-properties"
+        garibaldi "sonique.garibaldi:garibaldi-properties"
+        macaroon "sonique.macaroon:macaroon-properties"
+        marzipan "sonique.marzipan:marzipan-properties"
+    )
+
+    local -A artifact_version_patterns
+    artifact_version_patterns=(
+        battenberg "*.*"
+        eclair "*.*"
+        garibaldi "*.*"
+        macaroon "*.*"
+        marzipan "1.*"
     )
 
     local app="$1"
     local repository="$2"
     local coordinate=${artifact_coordinates[$app]}
+    local propertiesCoordinate=${properties_coordinates[$app]}
+    local appVersionPattern=${artifact_version_patterns[$app]}
 
     if [ -z ${repository} ]; then
         repository=${_ARTIFACTORY_REPOSITORY}
@@ -41,17 +61,31 @@ function _get_latest_version {
         local artifactId=${coordinate##*:}
     fi
 
+    if [ -z ${propertiesCoordinate} ]; then
+        local propertiesGroupId="sonique.${app}"
+        local propertiesArtifactId="${app}-properties"
+    else
+        local propertiesGroupId=${propertiesCoordinate%:*}
+        local propertiesArtifactId=${propertiesCoordinate##*:}
+    fi
+
+    if [ -z ${appVersionPattern} ]; then
+        local versionPattern="*"
+    else
+        local versionPattern=${appVersionPattern}
+    fi
+
     {
         function fetch_latest_version {
-            curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${1}&a=${2}&repos=${repository}"
+            curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=${1}&a=${2}&v=${3}&repos=${repository}"
         }
 
-        local app_version="$(fetch_latest_version ${groupId} ${artifactId})"
+        local app_version="$(fetch_latest_version ${groupId} ${artifactId} ${versionPattern})"
         if [[ ${app_version} =~ '"status" : 404' ]]; then
             return
         fi
 
-        local properties_version="$(fetch_latest_version ${groupId} "${app}-properties")"
+        local properties_version="$(fetch_latest_version ${propertiesGroupId} ${propertiesArtifactId} ${versionPattern})"
         if [[ ${properties_version} =~ '"status" : 404' ]]; then
             return
         fi
