@@ -326,7 +326,7 @@ function list-deployed-apps {
                  description+=" ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}"
             fi
 
-            printf '- %s\n' ${description}
+            printf -- '- %s\n' ${description}
         done
     done
 
@@ -356,6 +356,6 @@ function list-deployed-apps {
             description+=" ${_BOLD}${_TEXT_WHITE}(running)${_RESET_FORMATTING}"
         fi
 
-        printf '- %s\n' ${description}
+        printf -- '- %s\n' ${description}
     done
 }
