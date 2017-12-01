@@ -100,7 +100,7 @@ function startVdcDatabase {
 
     if [[ $? -eq 1 ]]; then
         echo 'Creating local Docker database for VDC apps'
-        docker run --name oracle-12c-vdc -d -p 1525:1521 -p 5505:5500 --shm-size=2g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c-vdc repo.sns.sky.com:8085/sns-is-dev/oracle-12c-vdc:19 > /dev/null
+        docker run --name oracle-12c-vdc -d -p 1525:1521 -p 5505:5500 --shm-size=2g --restart=unless-stopped --net=sonique-network --net-alias=oracle-12c-vdc repo.sns.sky.com:8085/dost/oracle-12c-vdc:69 > /dev/null
     else
         if [[ $output == 'running' ]]; then
             #do nothing
