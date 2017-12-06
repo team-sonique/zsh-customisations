@@ -13,10 +13,10 @@ function _get_latest_version {
         spm-sat "sonique.spm-sat:spm-sat-core"
         redqueen "sonique.redqueen:redqueen-core"
         luthor "sonique.luthor:luthor-core"
-        bullwinkle "sonique.bullwinkle:bullwinkle-core"
+        bullwinkle "charts:bullwinkle-chart"
         sherman "sonique.sherman:sherman-core"
-        dudley "sonique.dudley:dudley-core"
-        rocky "sonique.rocky:rocky-dist"
+        dudley "charts:dudley-chart"
+        rocky "charts:rocky-chart"
         felix "sonique.felix:felix-dist"
         battenberg "charts:battenberg-chart"
         marzipan "charts:marzipan-chart"
@@ -32,6 +32,9 @@ function _get_latest_version {
         garibaldi "sonique.garibaldi:garibaldi-properties"
         macaroon "sonique.macaroon:macaroon-properties"
         marzipan "sonique.marzipan:marzipan-properties"
+        bullwinkle "sonique.bullwinkle:bullwinkle-properties"
+        duley "sonique.dudley:dudley-properties"
+        rocky "sonique.rocky:rocky-properties"
     )
 
     local -A artifact_version_patterns
@@ -41,6 +44,9 @@ function _get_latest_version {
         garibaldi "*.*"
         macaroon "*.*"
         marzipan "1.*"
+        dudley "*.*"
+        bullwinkle "*.*"
+        rocky "*.*"
     )
 
     local app="$1"
