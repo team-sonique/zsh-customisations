@@ -26,7 +26,7 @@ function _is_in_docker_repo {
     if [[ ${non_docker_overrides[(r)${app}]} == ${app} ]] ; then
         return 1
     else
-        local response=$(curl --write-out %{http_code} --silent --output /dev/null "${_ARTIFACTORY}/docker-local/sns-is-dev/${app}")
+        local response=$(curl --write-out %{http_code} --silent --output /dev/null "${_ARTIFACTORY}/docker-local/ukiss/${app}")
         if [[ ${response} -eq '404' ]]; then
             return 1
         else
