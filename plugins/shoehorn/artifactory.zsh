@@ -17,7 +17,7 @@ function _get_latest_version {
         sherman "sonique.sherman:sherman-core"
         dudley "charts:dudley-chart"
         rocky "charts:rocky-chart"
-        felix "sonique.felix:felix-dist"
+        felix "charts:felix-chart"
         battenberg "charts:battenberg-chart"
         marzipan "charts:marzipan-chart"
         garibaldi "charts:garibaldi-chart"
@@ -35,6 +35,7 @@ function _get_latest_version {
         bullwinkle "sonique.bullwinkle:bullwinkle-properties"
         duley "sonique.dudley:dudley-properties"
         rocky "sonique.rocky:rocky-properties"
+        felix "sonique.felix:felix-properties"
     )
 
     local -A artifact_version_patterns
@@ -47,6 +48,7 @@ function _get_latest_version {
         dudley "*.*"
         bullwinkle "*.*"
         rocky "*.*"
+        felix "*.*"
     )
 
     local app="$1"
