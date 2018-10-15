@@ -141,6 +141,17 @@ function runBattenbergLoaderJob {
     (set -x; docker run --rm --name battenberg-loader --net=sonique-network --net-alias=battenberg-loader -v /data:/app/data  -e "cluster.host=sonique-cluster.sns.sky.com" -e "npr.volume.mount.path=/app/npr" -e "replicas=3" -e "npr.volume.host.server=vm002544.bskyb.com" -e "repo.host=repo.sns.sky.com" -e "npr.volume.host.path=/home/sonique/nfs/npr" -e "npr.volume.name=npr-ftp" -e "limits.memory=4Gi" -e "nodePort=30030" -e "repo.port=8085" -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "service.summary.status.path=status" -e "app.data.integrity.ignore.window.mins=15" -e "app.data.retention.period.in.days=30" -e "loader.schedule=*/1 * * * *" -e "jdbc.connection.user=battenberg_user" -e "app.file.directory=/app/data/npr" -e "jdbc.connection.password=battenberg" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c-vdc:1521/db1" -e "app.port=8087" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BATTENBERG_2" -e "service.summary.lookup.path=service" -e "service.summary.base.uri=http://$ip_addr:11565/repoman/" -e "app.expected.file.receipt.time=23:59:59" -e TZ=Europe/London repo.sns.sky.com:8085/ukiss/battenberg-loader:$battenberg_loader_version)
 }
 
+function runBattenbergEnhancerJob {
+    local battenberg_enhancer_version=$1
+    if [ -e ${battenberg_enhancer_version} ]; then
+        battenberg_enhancer_version=$(curl -s "${_ARTIFACTORY}/api/search/latestVersion?g=charts&a=battenberg-chart&v=*.*&repos=libs-releases-local")
+    fi
+    echo "Running Battenberg Loader Job version $battenberg_enhancer_version"
+    ip_addr=$(ipconfig getifaddr en0)
+
+    (set -x; docker run --rm --name battenberg-enhancer --net=sonique-network --net-alias=battenberg-enhancer -v /data:/app/data  -e "cluster.host=sonique-cluster.sns.sky.com" -e "npr.volume.mount.path=/app/npr" -e "replicas=3" -e "npr.volume.host.server=vm002544.bskyb.com" -e "repo.host=repo.sns.sky.com" -e "npr.volume.host.path=/home/sonique/nfs/npr" -e "npr.volume.name=npr-ftp" -e "limits.memory=4Gi" -e "nodePort=30030" -e "repo.port=8085" -e "jdbc.transaction.context.factory.class=sonique.sql.transaction.factory.OracleTransactionContextFactory" -e "service.summary.status.path=status" -e "app.data.integrity.ignore.window.mins=15" -e "app.data.retention.period.in.days=30" -e "enhancer.schedule=*/1 * * * *" -e "jdbc.connection.user=battenberg_user" -e "app.file.directory=/app/data/npr" -e "jdbc.connection.password=battenberg" -e "jdbc.connection.url=jdbc:oracle:thin:@//oracle-12c-vdc:1521/db1" -e "app.port=8087" -e "jdbc.connection.driver=oracle.jdbc.pool.OracleDataSource" -e "database.edition=BATTENBERG_2" -e "service.summary.lookup.path=service" -e "service.summary.base.uri=http://$ip_addr:11565/repoman/" -e "app.expected.file.receipt.time=23:59:59" -e TZ=Europe/London repo.sns.sky.com:8085/ukiss/battenberg-enhancer:$battenberg_enhancer_version)
+}
+
 function runBullwinkleWriterJob {
     local bullwinkle_writer_version=$1
     if [ -e ${bullwinkle_writer_version} ]; then
